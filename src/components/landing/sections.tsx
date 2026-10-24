@@ -357,7 +357,7 @@ function AccessBadge({ header, title, sub, no, tilt, dark = false, href, onClick
       </span>
     </>
   );
-  const cls = `group/tag relative block w-full max-w-[250px] rounded-2xl text-left no-underline bg-transparent border-none p-0 cursor-pointer transition-transform duration-300 hover:rotate-0 hover:-translate-y-1 ${tilt} ${dark ? 'lp-on-dark' : ''}`;
+  const cls = `group/tag lp-glow [--lp-glow-color:rgb(255_255_255/0.95)] [--lp-glow-near:rgb(255_255_255/0.45)] relative block w-full max-w-[250px] rounded-2xl text-left no-underline bg-transparent border-none p-0 cursor-pointer hover:rotate-0 hover:-translate-y-1 ${tilt} ${dark ? 'lp-on-dark' : ''}`;
   return href ? <a href={href} className={cls}>{body}</a> : <button type="button" onClick={onClick} className={cls}>{body}</button>;
 }
 

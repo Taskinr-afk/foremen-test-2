@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { CSSProperties, ReactNode } from 'react';
 
 // Where "Book a call" goes. Swap for a team inbox or scheduling link before launch.
 export const CONTACT_EMAIL = 'yingyuul05@gmail.com';
@@ -91,12 +91,13 @@ type PillProps = { children: ReactNode; variant?: 'yellow' | 'dark'; href?: stri
 export function Pill({ children, variant = 'yellow', href, onClick, ringOn = 'var(--lp-bg)' }: PillProps) {
   const yellow = variant === 'yellow';
   const className =
-    'lp-display group/pill inline-flex items-center gap-3 rounded-full pl-4 pr-6 py-3 text-sm font-bold tracking-wide no-underline cursor-pointer border-none transition-[filter,transform] duration-150 hover:brightness-95 active:translate-y-px';
+    'lp-display lp-glow group/pill inline-flex items-center gap-3 rounded-full pl-4 pr-6 py-3 text-sm font-bold tracking-wide no-underline cursor-pointer border-none hover:brightness-95 active:translate-y-px';
+  // The ring goes through --lp-ring so .lp-glow can add the hover glow on top of it
   const style = {
     background: yellow ? 'var(--lp-yellow)' : 'var(--lp-dark)',
     color: yellow ? 'var(--lp-ink)' : '#fff',
-    boxShadow: `0 0 0 3px ${ringOn}, 0 0 0 4px ${yellow ? 'var(--lp-ink)' : 'var(--lp-ink-3)'}`,
-  };
+    '--lp-ring': `0 0 0 3px ${ringOn}, 0 0 0 4px ${yellow ? 'var(--lp-ink)' : 'var(--lp-ink-3)'}`,
+  } as CSSProperties;
   const inner = (
     <>
       <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full transition-transform group-hover/pill:scale-150" style={{ background: yellow ? 'var(--lp-ink)' : 'var(--lp-yellow)' }} />
