@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { useAppStore } from '@/lib/stores/app-store';
 import type { Establishment } from '@/lib/schemas/incident';
@@ -62,14 +62,14 @@ const ESTABLISHMENT_FIELDS: { key: keyof Establishment; label: string; numeric?:
 
 export function SettingsView() {
   const { establishment, updateEstablishment } = useAppStore();
-  const [theme, setTheme] = useState<Theme>('system');
-
-  useEffect(() => {
+  // Settings only renders client-side after navigation, so reading storage on first render is safe
+  const [theme, setTheme] = useState<Theme>(() => {
     try {
-      const saved = localStorage.getItem('foreman-theme') as Theme | null;
-      if (saved) setTheme(saved);
-    } catch {}
-  }, []);
+      return (localStorage.getItem('foreman-theme') as Theme | null) ?? 'system';
+    } catch {
+      return 'system';
+    }
+  });
 
   function applyTheme(t: Theme) {
     setTheme(t);
@@ -147,8 +147,10 @@ export function SettingsView() {
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           {ESTABLISHMENT_FIELDS.map((f) => (
             <div key={f.key}>
-              <label className="block text-xs font-medium text-[var(--ink-muted)] mb-1.5">{f.label}</label>
+              <label htmlFor={`est-${f.key}`} className="block text-xs font-medium text-[var(--ink-muted)] mb-1.5">{f.label}</label>
               <input
+                id={`est-${f.key}`}
+                aria-describedby={f.hint ? `est-${f.key}-hint` : undefined}
                 type={f.numeric ? 'number' : 'text'}
                 min={f.numeric ? 0 : undefined}
                 step={f.numeric ? 'any' : undefined}
@@ -158,7 +160,7 @@ export function SettingsView() {
                 }
                 className="input-field"
               />
-              {f.hint && <p className="text-[11px] text-[var(--ink-faint)] mt-1">{f.hint}</p>}
+              {f.hint && <p id={`est-${f.key}-hint`} className="text-[11px] text-[var(--ink-faint)] mt-1">{f.hint}</p>}
             </div>
           ))}
         </div>

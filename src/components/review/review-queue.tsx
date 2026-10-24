@@ -172,8 +172,9 @@ function ReviewCard({ incident, index }: { incident: Incident; index: number }) 
             <div className="space-y-3">
               {d.openQuestions.map((q, qi) => (
                 <div key={qi}>
-                  <label className="block text-xs text-[var(--ink)] mb-1">{q}</label>
+                  <label htmlFor={`q-${incident.id}-${qi}`} className="block text-xs text-[var(--ink)] mb-1">{q}</label>
                   <input
+                    id={`q-${incident.id}-${qi}`}
                     className="input-field"
                     value={answers[qi] ?? ''}
                     disabled={answered}
@@ -190,7 +191,7 @@ function ReviewCard({ incident, index }: { incident: Incident; index: number }) 
               <button
                 disabled={!allAnswered}
                 onClick={() => answerQuestions(incident.id, answers)}
-                className="mt-3 px-3 py-1.5 text-xs font-medium text-white rounded-[var(--radius-md)] disabled:opacity-40"
+                className="mt-3 px-3 py-1.5 text-xs font-medium text-[var(--on-accent)] rounded-[var(--radius-md)] disabled:opacity-40"
                 style={{ backgroundColor: 'var(--accent)' }}
               >
                 Send answers to engine
@@ -207,7 +208,7 @@ function ReviewCard({ incident, index }: { incident: Incident; index: number }) 
               {d.outcome !== 'needs-info' && (
                 <motion.button
                   onClick={() => acceptDetermination(incident.id)}
-                  className="px-4 py-2 text-xs font-medium text-white rounded-[var(--radius-md)]"
+                  className="px-4 py-2 text-xs font-medium text-[var(--on-engine)] rounded-[var(--radius-md)]"
                   style={{ backgroundColor: 'var(--engine)' }}
                   whileHover={{ scale: 1.03, y: -1 }}
                   whileTap={{ scale: 0.96 }}
@@ -246,6 +247,7 @@ function ReviewCard({ incident, index }: { incident: Incident; index: number }) 
                 ))}
                 {overrideOutcome === 'recordable' && (
                   <select
+                    aria-label="OSHA 300 column"
                     className="input-field !w-auto"
                     value={overrideClass}
                     onChange={(e) => setOverrideClass(e.target.value as Classification)}
@@ -259,6 +261,7 @@ function ReviewCard({ incident, index }: { incident: Incident; index: number }) 
                 )}
               </div>
               <textarea
+                aria-label="Reason for override"
                 className="input-field"
                 rows={2}
                 placeholder="Reason for override (required, saved to the audit trail)"
@@ -269,7 +272,7 @@ function ReviewCard({ incident, index }: { incident: Incident; index: number }) 
                 <button
                   disabled={!reason.trim()}
                   onClick={() => overrideDetermination(incident.id, overrideOutcome, overrideOutcome === 'recordable' ? overrideClass : null, reason)}
-                  className="px-4 py-2 text-xs font-medium text-white rounded-[var(--radius-md)] disabled:opacity-40"
+                  className="px-4 py-2 text-xs font-medium text-[var(--on-accent)] rounded-[var(--radius-md)] disabled:opacity-40"
                   style={{ backgroundColor: 'var(--accent)' }}
                 >
                   Confirm override

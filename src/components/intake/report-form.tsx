@@ -114,8 +114,8 @@ export function ReportForm() {
                       className={clsx(
                         'flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-xs font-medium transition-all',
                         isRecording
-                          ? 'bg-[var(--alert)] text-white'
-                          : 'bg-[var(--accent-subtle)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-white'
+                          ? 'bg-[var(--alert)] text-[var(--on-alert)]'
+                          : 'bg-[var(--accent-subtle)] text-[var(--accent)] hover:bg-[var(--accent)] hover:text-[var(--on-accent)]'
                       )}
                       style={{ transitionDuration: 'var(--duration-fast)' }}
                     >
@@ -132,7 +132,7 @@ export function ReportForm() {
                       )}
                     </button>
                     <button
-                      className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-xs font-medium bg-[var(--blue-subtle)] text-[var(--blue)] hover:bg-[var(--blue)] hover:text-white transition-all"
+                      className="flex items-center gap-2 px-3 py-2 rounded-[var(--radius-md)] text-xs font-medium bg-[var(--blue-subtle)] text-[var(--blue)] hover:bg-[var(--blue)] hover:text-[var(--on-blue)] transition-all"
                       style={{ transitionDuration: 'var(--duration-fast)' }}
                     >
                       <CameraIcon className="w-3.5 h-3.5" />
@@ -145,7 +145,7 @@ export function ReportForm() {
                     className={clsx(
                       'flex items-center gap-2 px-4 py-2 rounded-[var(--radius-md)] text-xs font-medium transition-all',
                       inputText.trim()
-                        ? 'bg-[var(--accent)] text-white hover:bg-[var(--accent-hover)]'
+                        ? 'bg-[var(--accent)] text-[var(--on-accent)] hover:bg-[var(--accent-hover)]'
                         : 'bg-[var(--border)] text-[var(--ink-faint)] cursor-not-allowed'
                     )}
                     style={{ transitionDuration: 'var(--duration-fast)' }}
@@ -214,7 +214,7 @@ export function ReportForm() {
                     transition={{ delay: i * 0.4 + 0.2, type: 'spring', damping: 12 }}
                   >
                     <div className="w-5 h-5 rounded-full bg-[var(--engine)] flex items-center justify-center">
-                      <svg className="w-3 h-3 text-white" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                      <svg className="w-3 h-3 text-[var(--on-engine)]" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
                         <path d="M3 8l3.5 3.5L13 5" />
                       </svg>
                     </div>
@@ -281,7 +281,7 @@ export function ReportForm() {
               </button>
               <button
                 onClick={handleAcceptAndSubmit}
-                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-white rounded-[var(--radius-md)] hover:opacity-90 transition-colors"
+                className="flex items-center gap-2 px-5 py-2.5 text-sm font-medium text-[var(--on-accent)] rounded-[var(--radius-md)] hover:opacity-90 transition-colors"
                 style={{ backgroundColor: 'var(--accent)', transitionDuration: 'var(--duration-fast)' }}
               >
                 Facts look right, submit
@@ -327,7 +327,7 @@ export function ReportForm() {
             </p>
             <button
               onClick={handleReset}
-              className="px-4 py-2 text-sm font-medium text-white rounded-[var(--radius-md)] transition-colors"
+              className="px-4 py-2 text-sm font-medium text-[var(--on-accent)] rounded-[var(--radius-md)] transition-colors"
               style={{ backgroundColor: 'var(--accent)', transitionDuration: 'var(--duration-fast)' }}
             >
               Report Another Incident

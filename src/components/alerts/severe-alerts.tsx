@@ -57,7 +57,7 @@ export function SevereAlerts() {
             </span>
             <motion.button
               onClick={() => markSevereReported(i.id)}
-              className="px-3 py-1.5 text-xs font-medium text-white rounded-[var(--radius-md)] shrink-0"
+              className="px-3 py-1.5 text-xs font-medium text-[var(--on-alert)] rounded-[var(--radius-md)] shrink-0"
               style={{ backgroundColor: 'var(--alert)' }}
               whileHover={{ scale: 1.04, y: -1 }}
               whileTap={{ scale: 0.96 }}

@@ -3,6 +3,7 @@
 import { useAppStore } from '@/lib/stores/app-store';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
+import { useSyncExternalStore } from 'react';
 
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: GridIcon },
@@ -13,9 +14,20 @@ const NAV_ITEMS = [
   { id: 'settings', label: 'Settings', icon: GearIcon },
 ];
 
+const DESKTOP = '(min-width: 1024px)';
+
+function subscribeDesktop(onChange: () => void) {
+  const mq = window.matchMedia(DESKTOP);
+  mq.addEventListener('change', onChange);
+  return () => mq.removeEventListener('change', onChange);
+}
+
 export function Sidebar() {
   const { sidebarOpen, activeView, setActiveView, setSidebarOpen, incidents } = useAppStore();
   const pendingCount = incidents.filter((i) => i.review.status === 'pending').length;
+  const isDesktop = useSyncExternalStore(subscribeDesktop, () => window.matchMedia(DESKTOP).matches, () => true);
+  // The mobile drawer is only translated off-screen, so keep keyboard focus out of it while closed
+  const hidden = !isDesktop && !sidebarOpen;
 
   return (
     <>
@@ -32,6 +44,7 @@ export function Sidebar() {
         )}
       </AnimatePresence>
       <aside
+        inert={hidden}
         className={clsx(
           'fixed left-0 top-0 bottom-0 z-40 flex flex-col border-r lg:translate-x-0 lg:sticky lg:top-0 lg:h-dvh lg:z-auto',
           'bg-[var(--card)] border-[var(--border)] shrink-0',
@@ -40,29 +53,27 @@ export function Sidebar() {
         )}
       >
         <div className="flex items-center gap-3 px-5 h-16 border-b border-[var(--border)]">
-          <motion.div
-            className="w-8 h-8 rounded-[var(--radius-md)] bg-[var(--accent)] flex items-center justify-center"
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            transition={{ type: 'spring', stiffness: 400, damping: 17 }}
-          >
-            <span className="text-white font-bold text-sm" style={{ fontFamily: 'var(--font-display)' }}>F</span>
-          </motion.div>
+          <div className="w-8 h-8 bg-[var(--signal)] flex items-center justify-center" aria-hidden="true">
+            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="#121212">
+              <path d="M12 2L2 7v2h20V7L12 2zM4 11v8h3v-8H4zm5 0v8h3v-8H9zm5 0v8h3v-8h-3zm5 0v8h3v-8h-3zM2 21h20v2H2v-2z" />
+            </svg>
+          </div>
           <div>
-            <h1 className="text-sm font-semibold text-[var(--ink)]" style={{ fontFamily: 'var(--font-display)' }}>
-              Foreman
-            </h1>
-            <p className="text-[11px] text-[var(--ink-faint)]">AI Safety Compliance</p>
+            <p className="m-0 text-sm font-bold tracking-tight text-[var(--ink)]" style={{ fontFamily: 'var(--font-display)' }}>
+              FOREMAN
+            </p>
+            <p className="m-0 text-[10px] tracking-[0.15em] uppercase text-[var(--ink-faint)]" style={{ fontFamily: 'var(--font-mono)' }}>OSHA Recordkeeping</p>
           </div>
         </div>
 
-        <nav className="flex-1 py-2 px-3 space-y-0.5 overflow-y-auto">
+        <nav aria-label="Dashboard" className="flex-1 py-2 px-3 space-y-0.5 overflow-y-auto">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon;
             const active = activeView === item.id;
             return (
               <motion.button
                 key={item.id}
+                aria-current={active ? 'page' : undefined}
                 onClick={() => {
                   setActiveView(item.id);
                   setSidebarOpen(false);
@@ -90,7 +101,7 @@ export function Sidebar() {
                   {item.label}
                   {item.id === 'review' && pendingCount > 0 && (
                     <motion.span
-                      className="ml-auto text-[11px] font-medium bg-[var(--accent)] text-white px-1.5 py-0.5 rounded-full"
+                      className="ml-auto text-[11px] font-medium bg-[var(--accent)] text-[var(--on-accent)] px-1.5 py-0.5 rounded-full"
                       initial={{ scale: 0 }}
                       animate={{ scale: 1 }}
                       transition={{ type: 'spring', stiffness: 500, damping: 15, delay: 0.2 }}
@@ -105,11 +116,7 @@ export function Sidebar() {
         </nav>
 
         <div className="px-3 py-3 border-t border-[var(--border)]">
-          <motion.div
-            className="flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)] cursor-pointer"
-            whileHover={{ backgroundColor: 'var(--card-hover)' }}
-            transition={{ duration: 0.15 }}
-          >
+          <motion.div className="flex items-center gap-3 px-3 py-2 rounded-[var(--radius-md)]">
             <div className="w-7 h-7 rounded-full bg-[var(--border)] flex items-center justify-center">
               <span className="text-xs font-medium text-[var(--ink-muted)]">TM</span>
             </div>
@@ -144,14 +151,6 @@ function PlusCircleIcon({ className }: { className?: string }) {
   );
 }
 
-function ListIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
-      <path d="M5 3h9M5 8h9M5 13h9M2 3h0M2 8h0M2 13h0" />
-    </svg>
-  );
-}
-
 function CheckCircleIcon({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
@@ -166,15 +165,6 @@ function TableIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
       <rect x="1.5" y="2.5" width="13" height="11" rx="1.5" />
       <path d="M1.5 6h13M1.5 9.5h13M5.5 6v7.5M10.5 6v7.5" />
-    </svg>
-  );
-}
-
-function FileIcon({ className }: { className?: string }) {
-  return (
-    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-      <path d="M9.5 1.5H4a1.5 1.5 0 00-1.5 1.5v10A1.5 1.5 0 004 14.5h8a1.5 1.5 0 001.5-1.5V5.5L9.5 1.5z" />
-      <path d="M9.5 1.5V5.5H13.5" />
     </svg>
   );
 }
