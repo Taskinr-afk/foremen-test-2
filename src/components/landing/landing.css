@@ -85,6 +85,12 @@
 }
 @keyframes lp-blink { 50% { opacity: 0; } }
 
+/* Progress bar under the active case tab; its animationend advances the cycle */
+@keyframes lp-progress {
+  from { transform: scaleX(0); }
+  to { transform: scaleX(1); }
+}
+
 /* Square particles drifting up inside a hovered module strip */
 .lp-particle {
   position: absolute;

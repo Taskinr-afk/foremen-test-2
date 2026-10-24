@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, useReducedMotion, useScroll, useTransform } from 'framer-motion';
-import { useRef, useState, type KeyboardEvent } from 'react';
+import { useEffect, useRef, useState, type KeyboardEvent } from 'react';
 import { CALL_HREF, Chip, Contours, Dimension, EASE, Glyph, Pill } from './parts';
 
 const BOOT = ['facility_04 connected', 'part_1904 rules loaded', 'awaiting incident report'];
@@ -69,30 +69,149 @@ const CASES = [
 ] as const;
 
 /** Sample case files with one tab per industry. Illustrative only. */
-function CaseFile() {
-  const [active, setActive] = useState(0);
-  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
-  const c = CASES[active];
+const CYCLE_MS = 6000;
+
+/** One case's panel. All four stay mounted in the same grid cell, so the card keeps the tallest
+    case's height and the page below doesn't jump while the cases cycle. */
+function CasePanel({ c, i, active }: { c: (typeof CASES)[number]; i: number; active: boolean }) {
   const days = 7;
   const used = 2;
+  return (
+    <div
+      id={`case-panel-${i}`}
+      role="tabpanel"
+      aria-labelledby={`case-tab-${i}`}
+      tabIndex={active ? 0 : -1}
+      className={`lp-blueprint p-6 sm:p-7 [grid-area:1/1] transition-opacity duration-300 ${active ? 'opacity-100' : 'opacity-0 invisible'}`}
+    >
+      <div className="lp-mono flex items-center justify-between text-[11px] tracking-[0.2em] text-[var(--lp-ink-3)] mb-5">
+        <span>[ CASE FILE ]</span>
+        <span>SAMPLE · {c.no}</span>
+      </div>
+
+      <p className="lp-display text-2xl font-bold tracking-tight m-0">{c.title}</p>
+      <p className="text-sm text-[var(--lp-ink-3)] mt-1 mb-5">{c.meta}</p>
+
+      <div className="space-y-1.5 mb-5">
+        {c.facts.map(([label, value]) => <Chip key={label} label={label}>{value}</Chip>)}
+      </div>
+
+      <div className="bg-[var(--lp-dark)] text-white p-4 mb-5">
+        <div className="flex items-center justify-between gap-3 mb-2">
+          <span className="lp-mono text-[10px] tracking-[0.2em] text-white/65">ENGINE RECOMMENDATION</span>
+          <span
+            className="lp-display text-xs font-bold tracking-wider px-2 py-1"
+            style={c.recordable ? { background: 'var(--lp-yellow)', color: 'var(--lp-ink)' } : { background: 'transparent', color: '#fff', boxShadow: 'inset 0 0 0 1px rgb(255 255 255 / 0.6)' }}
+          >
+            {c.recordable ? 'RECORDABLE' : 'NOT RECORDABLE'}
+          </span>
+        </div>
+        <p className="text-sm text-white/85 m-0 leading-snug">{c.reason}</p>
+        <p className="lp-mono text-[11px] text-white/60 m-0 mt-1">{c.cite}</p>
+      </div>
+
+      {c.recordable ? (
+        <>
+          <div className="flex items-end justify-between mb-2">
+            <span className="lp-mono text-[10px] tracking-[0.2em] text-[var(--lp-ink-3)]">RECORD BY OCT 21</span>
+            <span className="lp-display font-bold">
+              <span className="text-3xl">{String(days - used).padStart(2, '0')}</span>
+              <span className="text-sm text-[var(--lp-ink-3)]">/{days} DAYS LEFT</span>
+            </span>
+          </div>
+          <div className="grid grid-cols-7 gap-1 mb-3" aria-hidden="true">
+            {Array.from({ length: days }).map((_, i) => (
+              <span key={i} className="h-2" style={{ background: i < used ? 'var(--lp-ink)' : 'var(--lp-panel-2)' }} />
+            ))}
+          </div>
+          <Dimension className="mb-6">Oct 14 → Oct 21 · 7 calendar days</Dimension>
+        </>
+      ) : (
+        <div className="mb-6 border border-dashed border-[var(--lp-ink-3)] px-4 py-3 lp-mono text-[11px] tracking-[0.15em] text-[var(--lp-ink-2)]">
+          NO 300 LOG ENTRY · CLOSE AFTER SIGN-OFF
+        </div>
+      )}
+
+      <div className="flex items-center justify-between border-t border-[var(--lp-line)] pt-4">
+        <span className="lp-mono text-[11px] tracking-[0.15em] text-[var(--lp-ink-2)] flex items-center gap-2">
+          <span className="w-2 h-2 rounded-full bg-[var(--lp-orange)]" aria-hidden="true" />
+          AWAITING SIGN-OFF
+        </span>
+        <span className="lp-mono text-[11px] text-[var(--lp-ink-3)]">SAFETY MGR</span>
+      </div>
+    </div>
+  );
+}
+
+/** Sample case files, one tab per industry. Cycles on its own until someone takes control. */
+function CaseFile() {
+  const reduce = useReducedMotion();
+  const [active, setActive] = useState(0);
+  const [stopped, setStopped] = useState(false); // paused with the button, or a tab was picked
+  const [held, setHeld] = useState(false); // pointer over the card or focus inside it
+  const [onScreen, setOnScreen] = useState(true);
+  const ref = useRef<HTMLElement>(null);
+  const tabs = useRef<(HTMLButtonElement | null)[]>([]);
+
+  // Never auto-advance for people who asked for reduced motion (WCAG 2.2.2)
+  const autoplay = reduce === false && !stopped;
+  const running = autoplay && !held && onScreen;
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setOnScreen(e.isIntersecting), { threshold: 0.4 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  // Picking a case means the visitor is reading it: stop cycling for good
+  const choose = (i: number) => {
+    setActive(i);
+    setStopped(true);
+  };
 
   // Arrow keys move between tabs, per the WAI-ARIA tabs pattern
   const onKeyDown = (e: KeyboardEvent<HTMLDivElement>) => {
     const step = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
     if (!step) return;
     const next = (active + step + CASES.length) % CASES.length;
-    setActive(next);
+    choose(next);
     tabs.current[next]?.focus();
   };
 
   return (
     <motion.figure
+      ref={ref}
       aria-label="Sample case files by industry"
       className="relative m-0 bg-[var(--lp-panel)]/95 border border-[var(--lp-line)] shadow-[0_24px_60px_-30px_rgb(0_0_0/0.35)]"
       initial={{ opacity: 0, x: 40 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: 0.5, duration: 0.8, ease: EASE }}
+      onMouseEnter={() => setHeld(true)}
+      onMouseLeave={() => setHeld(false)}
+      onFocus={() => setHeld(true)}
+      onBlur={(e) => { if (!e.currentTarget.contains(e.relatedTarget as Node | null)) setHeld(false); }}
     >
+      <div className="lp-mono flex items-center justify-between gap-3 px-4 py-1.5 border-b border-[var(--lp-line)] text-[10px] tracking-[0.2em] text-[var(--lp-ink-3)]">
+        <span>
+          {autoplay ? 'AUTO-CYCLE' : 'SAMPLE CASES'} · {String(active + 1).padStart(2, '0')}/{String(CASES.length).padStart(2, '0')}
+        </span>
+        {reduce === false && (
+          <button
+            type="button"
+            onClick={() => setStopped((s) => !s)}
+            aria-label={stopped ? 'Play case rotation' : 'Pause case rotation'}
+            className="lp-mono flex items-center gap-1.5 px-2 py-1.5 -my-1 text-[10px] tracking-[0.2em] text-[var(--lp-ink-2)] bg-transparent border-none cursor-pointer hover:text-[var(--lp-ink)]"
+          >
+            <svg viewBox="0 0 10 10" width="9" height="9" fill="currentColor" aria-hidden="true">
+              {stopped ? <path d="M2 1l7 4-7 4z" /> : <path d="M2 1h2v8H2zM6 1h2v8H6z" />}
+            </svg>
+            {stopped ? 'PLAY' : 'PAUSE'}
+          </button>
+        )}
+      </div>
+
       <div role="tablist" aria-label="Industry" onKeyDown={onKeyDown} className="grid grid-cols-4 border-b border-[var(--lp-line)]">
         {CASES.map((k, i) => (
           <button
@@ -102,82 +221,29 @@ function CaseFile() {
             role="tab"
             type="button"
             aria-selected={i === active}
-            aria-controls="case-panel"
+            aria-controls={`case-panel-${i}`}
             tabIndex={i === active ? 0 : -1}
-            onClick={() => setActive(i)}
-            className={`lp-mono text-[10px] sm:text-[11px] tracking-normal sm:tracking-[0.12em] uppercase py-3 border-none cursor-pointer transition-colors ${i === active ? 'bg-[var(--lp-dark)] text-white' : 'bg-transparent text-[var(--lp-ink-2)] hover:bg-[var(--lp-panel-2)]'}`}
+            onClick={() => choose(i)}
+            className={`relative lp-mono text-[10px] sm:text-[11px] tracking-normal sm:tracking-[0.12em] uppercase py-3 border-none cursor-pointer transition-colors ${i === active ? 'bg-[var(--lp-dark)] text-white' : 'bg-transparent text-[var(--lp-ink-2)] hover:bg-[var(--lp-panel-2)]'}`}
           >
             {k.tab}
+            {/* The bar's animation is the timer: pausing it pauses the cycle with no drift */}
+            {i === active && autoplay && (
+              <span
+                key={active}
+                aria-hidden="true"
+                className="absolute left-0 right-0 bottom-0 h-[3px] bg-[var(--lp-yellow)] origin-left"
+                style={{ animation: `lp-progress ${CYCLE_MS}ms linear forwards`, animationPlayState: running ? 'running' : 'paused' }}
+                onAnimationEnd={() => setActive((a) => (a + 1) % CASES.length)}
+              />
+            )}
           </button>
         ))}
       </div>
 
-      <motion.div
-        key={c.no}
-        id="case-panel"
-        role="tabpanel"
-        aria-labelledby={`case-tab-${active}`}
-        className="lp-blueprint p-6 sm:p-7"
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.25 }}
-      >
-        <div className="lp-mono flex items-center justify-between text-[11px] tracking-[0.2em] text-[var(--lp-ink-3)] mb-5">
-          <span>[ CASE FILE ]</span>
-          <span>SAMPLE · {c.no}</span>
-        </div>
-
-        <p className="lp-display text-2xl font-bold tracking-tight m-0">{c.title}</p>
-        <p className="text-sm text-[var(--lp-ink-3)] mt-1 mb-5">{c.meta}</p>
-
-        <div className="space-y-1.5 mb-5">
-          {c.facts.map(([label, value]) => <Chip key={label} label={label}>{value}</Chip>)}
-        </div>
-
-        <div className="bg-[var(--lp-dark)] text-white p-4 mb-5">
-          <div className="flex items-center justify-between gap-3 mb-2">
-            <span className="lp-mono text-[10px] tracking-[0.2em] text-white/65">ENGINE RECOMMENDATION</span>
-            <span
-              className="lp-display text-xs font-bold tracking-wider px-2 py-1"
-              style={c.recordable ? { background: 'var(--lp-yellow)', color: 'var(--lp-ink)' } : { background: 'transparent', color: '#fff', boxShadow: 'inset 0 0 0 1px rgb(255 255 255 / 0.6)' }}
-            >
-              {c.recordable ? 'RECORDABLE' : 'NOT RECORDABLE'}
-            </span>
-          </div>
-          <p className="text-sm text-white/85 m-0 leading-snug">{c.reason}</p>
-          <p className="lp-mono text-[11px] text-white/60 m-0 mt-1">{c.cite}</p>
-        </div>
-
-        {c.recordable ? (
-          <>
-            <div className="flex items-end justify-between mb-2">
-              <span className="lp-mono text-[10px] tracking-[0.2em] text-[var(--lp-ink-3)]">RECORD BY OCT 21</span>
-              <span className="lp-display font-bold">
-                <span className="text-3xl">{String(days - used).padStart(2, '0')}</span>
-                <span className="text-sm text-[var(--lp-ink-3)]">/{days} DAYS LEFT</span>
-              </span>
-            </div>
-            <div className="grid grid-cols-7 gap-1 mb-3" aria-hidden="true">
-              {Array.from({ length: days }).map((_, i) => (
-                <span key={i} className="h-2" style={{ background: i < used ? 'var(--lp-ink)' : 'var(--lp-panel-2)' }} />
-              ))}
-            </div>
-            <Dimension className="mb-6">Oct 14 → Oct 21 · 7 calendar days</Dimension>
-          </>
-        ) : (
-          <div className="mb-6 border border-dashed border-[var(--lp-ink-3)] px-4 py-3 lp-mono text-[11px] tracking-[0.15em] text-[var(--lp-ink-2)]">
-            NO 300 LOG ENTRY · CLOSE AFTER SIGN-OFF
-          </div>
-        )}
-
-        <div className="flex items-center justify-between border-t border-[var(--lp-line)] pt-4">
-          <span className="lp-mono text-[11px] tracking-[0.15em] text-[var(--lp-ink-2)] flex items-center gap-2">
-            <span className="w-2 h-2 rounded-full bg-[var(--lp-orange)]" aria-hidden="true" />
-            AWAITING SIGN-OFF
-          </span>
-          <span className="lp-mono text-[11px] text-[var(--lp-ink-3)]">SAFETY MGR</span>
-        </div>
-      </motion.div>
+      <div className="grid">
+        {CASES.map((k, i) => <CasePanel key={k.no} c={k} i={i} active={i === active} />)}
+      </div>
     </motion.figure>
   );
 }
