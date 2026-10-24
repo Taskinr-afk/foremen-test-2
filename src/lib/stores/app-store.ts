@@ -1,11 +1,13 @@
 import { create } from 'zustand';
 import type { AuditEntry, Classification, Establishment, Incident } from '../schemas/incident';
-import { buildMockIncidents, MOCK_ESTABLISHMENT } from '../api/mock';
+import { getFacility, type FacilityId } from '../api/facilities';
 import { nextCaseNumber } from '../osha';
 
 const CURRENT_USER = 'Test Manager';
 
 interface AppState {
+  facility: FacilityId;
+  setFacility: (id: FacilityId) => void;
   incidents: Incident[];
   establishment: Establishment;
   auditLog: AuditEntry[];
@@ -47,12 +49,16 @@ function seedAudit(incidents: Incident[]): AuditEntry[] {
     .sort((a, b) => b.at.localeCompare(a.at));
 }
 
-const initialIncidents = buildMockIncidents();
+// Everything a sample facility brings: its establishment, incidents and the audit trail they imply
+function loadFacility(id: FacilityId) {
+  const f = getFacility(id);
+  const incidents = f.buildIncidents();
+  return { facility: id, establishment: f.establishment, incidents, auditLog: seedAudit(incidents) };
+}
 
 export const useAppStore = create<AppState>((set) => ({
-  incidents: initialIncidents,
-  establishment: MOCK_ESTABLISHMENT,
-  auditLog: seedAudit(initialIncidents),
+  ...loadFacility('construction'),
+  setFacility: (id) => set(loadFacility(id)),
   sidebarOpen: true,
   activeView: 'dashboard',
   setSidebarOpen: (open) => set({ sidebarOpen: open }),

@@ -4,15 +4,17 @@ import { useState, useRef } from 'react';
 import { clsx } from 'clsx';
 import { useAppStore } from '@/lib/stores/app-store';
 import { motion, AnimatePresence } from 'framer-motion';
-import { analyzeIncident, SAMPLE_VOICE_NOTE } from '@/lib/api/mock';
+import { analyzeIncident } from '@/lib/api/mock';
 import type { AnalysisResult } from '@/lib/api/mock';
+import { getFacility } from '@/lib/api/facilities';
 import { OUTCOME_LABELS } from '@/lib/schemas/incident';
 import { OUTCOME_STYLES } from '@/lib/osha';
 
 type Step = 'describe' | 'extracting' | 'review' | 'submitted';
 
 export function ReportForm() {
-  const { addIncident, incidents } = useAppStore();
+  const { addIncident, incidents, facility } = useAppStore();
+  const sample = getFacility(facility);
   const [step, setStep] = useState<Step>('describe');
   const [inputText, setInputText] = useState('');
   const [isRecording, setIsRecording] = useState(false);
@@ -22,7 +24,7 @@ export function ReportForm() {
   async function handleSubmitDescription() {
     if (!inputText.trim()) return;
     setStep('extracting');
-    setResult(await analyzeIncident(inputText));
+    setResult(await analyzeIncident(inputText, sample.analysis));
     setStep('review');
   }
 
@@ -65,7 +67,7 @@ export function ReportForm() {
     if (!isRecording) {
       setTimeout(() => {
         setIsRecording(false);
-        setInputText(SAMPLE_VOICE_NOTE);
+        setInputText(sample.voiceNote);
       }, 3000);
     }
   }
@@ -103,7 +105,8 @@ export function ReportForm() {
                   value={inputText}
                   onChange={(e) => setInputText(e.target.value)}
                   rows={6}
-                  placeholder='Example: "Mike slipped on the wet scaffold plank on level 3 and twisted his ankle. Clinic gave him a rigid splint and said no climbing for a week..."'
+                  aria-label="Describe what happened"
+                  placeholder='Example: "Mike slipped on a wet floor by the loading dock and twisted his ankle. Clinic gave him a rigid splint and said no climbing for a week..."'
                   className="w-full p-5 pb-16 text-sm text-[var(--ink)] bg-transparent border-none outline-none resize-none placeholder:text-[var(--ink-faint)]"
                   style={{ fontFamily: 'var(--font-body)' }}
                 />

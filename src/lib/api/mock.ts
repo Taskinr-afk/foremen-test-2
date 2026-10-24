@@ -2,10 +2,10 @@ import type { Determination, Establishment, Fact, Incident, SevereAlert } from '
 
 // Stand-in for the backend (Claude extraction + Part 1904 rules engine). Swap analyzeIncident for the real API call.
 
-const ENGINE = 'mock-0.1';
-const HOUR = 3_600_000;
+export const ENGINE = 'mock-0.1';
+export const HOUR = 3_600_000;
 
-function fact(key: string, label: string, value: string | null, source: string | null, confidence: Fact['confidence'] = 'high'): Fact {
+export function fact(key: string, label: string, value: string | null, source: string | null, confidence: Fact['confidence'] = 'high'): Fact {
   return { key, label, value, source, confidence };
 }
 
@@ -311,36 +311,41 @@ export interface AnalysisResult {
   daysRestricted: number;
 }
 
-export async function analyzeIncident(_text: string): Promise<AnalysisResult> {
+// What the mock engine "extracts" from a facility's sample voice note
+export type SampleAnalysis = Omit<AnalysisResult, 'date'>;
+
+// The mock ignores the text and returns the facility's canned result.
+export async function analyzeIncident(_text: string, sample: SampleAnalysis = CONSTRUCTION_ANALYSIS): Promise<AnalysisResult> {
   await new Promise((r) => setTimeout(r, 2200));
-  return {
-    employeeName: 'Jake',
-    jobTitle: '',
-    date: new Date().toISOString().split('T')[0],
-    location: 'Level 4 deck',
-    bodyPart: 'Left forearm',
-    description: 'Cut left forearm on exposed rebar. Clinic closed it with 4 sutures and gave a tetanus shot. Physician restricted lifting over 20 lbs for one week.',
-    facts: [
-      fact('employee', 'Employee', 'Jake', 'Jake', 'low'),
-      fact('jobTitle', 'Job title', null, null, 'low'),
-      fact('location', 'Location', 'Level 4 deck', 'on the 4th floor deck'),
-      fact('time', 'Time of event', '10:00 AM', 'around 10am', 'medium'),
-      fact('bodyPart', 'Body part', 'Left forearm', 'his left forearm'),
-      fact('treatment', 'Treatment', '4 sutures; tetanus shot', 'closed it with 4 stitches, plus a tetanus shot'),
-      fact('medication', 'Medication', 'None mentioned', null, 'medium'),
-      fact('restrictions', 'Work restrictions', 'No lifting over 20 lbs, 7 days', 'no lifting over 20 pounds for a week'),
-      fact('daysAway', 'Days away', '0', 'light duty', 'medium'),
-      fact('loc', 'Loss of consciousness', 'No', null, 'medium'),
-    ],
-    determination: {
-      outcome: 'recordable',
-      classification: 'restricted',
-      reason: 'Sutures are medical treatment, so this is recordable. The tetanus shot alone would be first aid. A physician restricted lifting, which puts it in the restricted / transfer column if lifting over 20 lbs is part of his normal job.',
-      citations: ['1904.5(a)', '1904.7(b)(5)(i)', '1904.7(b)(5)(ii)(B)', '1904.7(b)(4)'],
-      openQuestions: [],
-      engineVersion: ENGINE,
-    },
-    severeAlert: null,
-    daysRestricted: 7,
-  };
+  return { ...sample, date: new Date().toISOString().split('T')[0] };
 }
+
+export const CONSTRUCTION_ANALYSIS: SampleAnalysis = {
+  employeeName: 'Jake',
+  jobTitle: '',
+  location: 'Level 4 deck',
+  bodyPart: 'Left forearm',
+  description: 'Cut left forearm on exposed rebar. Clinic closed it with 4 sutures and gave a tetanus shot. Physician restricted lifting over 20 lbs for one week.',
+  facts: [
+    fact('employee', 'Employee', 'Jake', 'Jake', 'low'),
+    fact('jobTitle', 'Job title', null, null, 'low'),
+    fact('location', 'Location', 'Level 4 deck', 'on the 4th floor deck'),
+    fact('time', 'Time of event', '10:00 AM', 'around 10am', 'medium'),
+    fact('bodyPart', 'Body part', 'Left forearm', 'his left forearm'),
+    fact('treatment', 'Treatment', '4 sutures; tetanus shot', 'closed it with 4 stitches, plus a tetanus shot'),
+    fact('medication', 'Medication', 'None mentioned', null, 'medium'),
+    fact('restrictions', 'Work restrictions', 'No lifting over 20 lbs, 7 days', 'no lifting over 20 pounds for a week'),
+    fact('daysAway', 'Days away', '0', 'light duty', 'medium'),
+    fact('loc', 'Loss of consciousness', 'No', null, 'medium'),
+  ],
+  determination: {
+    outcome: 'recordable',
+    classification: 'restricted',
+    reason: 'Sutures are medical treatment, so this is recordable. The tetanus shot alone would be first aid. A physician restricted lifting, which puts it in the restricted / transfer column if lifting over 20 lbs is part of his normal job.',
+    citations: ['1904.5(a)', '1904.7(b)(5)(i)', '1904.7(b)(5)(ii)(B)', '1904.7(b)(4)'],
+    openQuestions: [],
+    engineVersion: ENGINE,
+  },
+  severeAlert: null,
+  daysRestricted: 7,
+};

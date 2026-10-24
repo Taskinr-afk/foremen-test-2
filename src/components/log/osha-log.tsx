@@ -76,6 +76,9 @@ export function OshaLog() {
       </div>
 
       <motion.div
+        role="region"
+        aria-label="OSHA 300 Log table"
+        tabIndex={0}
         className="rounded-[var(--radius-lg)] border border-[var(--border)] bg-[var(--card)] overflow-x-auto"
         initial={{ opacity: 0, y: 12 }}
         animate={{ opacity: 1, y: 0 }}

@@ -1,10 +1,11 @@
 'use client';
 
 import { useAppStore } from '@/lib/stores/app-store';
+import { FACILITIES, type FacilityId } from '@/lib/api/facilities';
 import { motion, AnimatePresence } from 'framer-motion';
 
 export function AppHeader() {
-  const { setSidebarOpen, activeView } = useAppStore();
+  const { setSidebarOpen, activeView, facility, setFacility } = useAppStore();
 
   const titles: Record<string, string> = {
     dashboard: 'Dashboard',
@@ -43,9 +44,20 @@ export function AppHeader() {
         </motion.h1>
       </AnimatePresence>
       <div className="flex-1" />
-      <span className="hidden sm:inline text-[11px] tracking-[0.15em] uppercase text-[var(--ink-faint)]" style={{ fontFamily: 'var(--font-mono)' }}>
-        Sample data
-      </span>
+      <label htmlFor="sample-facility" className="hidden md:inline text-[11px] tracking-[0.15em] uppercase text-[var(--ink-faint)]" style={{ fontFamily: 'var(--font-mono)' }}>
+        Sample facility
+      </label>
+      <select
+        id="sample-facility"
+        aria-label="Sample facility"
+        value={facility}
+        onChange={(e) => setFacility(e.target.value as FacilityId)}
+        className="input-field !w-auto !py-1.5 !text-xs max-w-[44vw] sm:max-w-none"
+      >
+        {FACILITIES.map((f) => (
+          <option key={f.id} value={f.id}>{f.label}</option>
+        ))}
+      </select>
       <motion.button
         onClick={() => { window.location.hash = ''; }}
         className="flex items-center gap-2 px-3 py-1.5 text-xs font-medium rounded-[var(--radius-sm)] border border-[var(--border-strong)] hover:bg-[var(--card-hover)] text-[var(--ink-muted)] transition-colors"

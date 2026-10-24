@@ -44,7 +44,7 @@ function PlaceholderView({ title, description }: { title: string; description: s
 }
 
 function ViewRouter({ onSwitch }: { onSwitch: () => void }) {
-  const { activeView } = useAppStore();
+  const { activeView, facility } = useAppStore();
 
   return (
     <AnimatePresence mode="wait" onExitComplete={onSwitch}>
@@ -53,7 +53,7 @@ function ViewRouter({ onSwitch }: { onSwitch: () => void }) {
         {...pageTransition}
       >
         {activeView === 'dashboard' && <DashboardView />}
-        {activeView === 'report' && <ReportForm />}
+        {activeView === 'report' && <ReportForm key={facility} />}
         {activeView === 'review' && <ReviewQueue />}
         {activeView === 'log' && <OshaLog />}
         {activeView === 'incidents' && <PlaceholderView title="All Incidents" description="Full incident list with filtering and search. Coming next." />}
