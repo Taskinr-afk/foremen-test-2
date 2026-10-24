@@ -52,15 +52,27 @@ export function Dimension({ children, dark = false, className = '' }: { children
 export function SectionLabel({ index, children, dark = false }: { index: string; children: ReactNode; dark?: boolean }) {
   return (
     <div className={`lp-mono flex items-center gap-3 text-xs tracking-[0.12em] sm:tracking-[0.2em] uppercase ${dark ? 'text-white/70' : 'text-[var(--lp-ink-2)]'}`}>
-      <Diamond />
+      <Dash />
       <span>[ SEC.{index} {'//'} {children} ]</span>
       <span className={`hidden sm:block h-px w-16 shrink-0 ${dark ? 'bg-white/25' : 'bg-[var(--lp-line)]'}`} aria-hidden="true" />
     </div>
   );
 }
 
-export function Diamond({ className = '' }: { className?: string }) {
-  return <span aria-hidden="true" className={`inline-block w-2 h-2 rotate-45 shrink-0 ${className}`} style={{ background: 'var(--lp-orange)' }} />;
+/** Short orange rule, the accent before section labels */
+export function Dash({ className = '' }: { className?: string }) {
+  return <span aria-hidden="true" className={`inline-block w-3 h-[3px] shrink-0 ${className}`} style={{ background: 'var(--lp-orange)' }} />;
+}
+
+/** Orange drafting corner marks (top-left and bottom-right) framing the parent, which must be positioned */
+export function CornerMarks() {
+  const mark = 'pointer-events-none absolute w-2.5 h-2.5 border-[var(--lp-orange)]';
+  return (
+    <>
+      <span aria-hidden="true" className={`${mark} -top-1 -left-1 border-t-2 border-l-2`} />
+      <span aria-hidden="true" className={`${mark} -bottom-1 -right-1 border-b-2 border-r-2`} />
+    </>
+  );
 }
 
 /** Black label chip + value, as in "Faction | Hongshan" on the official site */

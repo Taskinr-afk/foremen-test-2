@@ -2,7 +2,7 @@
 
 import { motion, useMotionValueEvent, useReducedMotion, useScroll, useTransform } from 'framer-motion';
 import { useRef, useState, type ReactNode } from 'react';
-import { CALL_HREF, Chip, Contours, Diamond, Dimension, EASE, Glyph, SectionLabel } from './parts';
+import { CALL_HREF, Chip, Contours, CornerMarks, Dimension, EASE, Glyph, SectionLabel } from './parts';
 
 const reveal = {
   initial: { opacity: 0, y: 24 },
@@ -107,12 +107,12 @@ function ModuleStrip({ m, i }: { m: (typeof modules)[number]; i: number }) {
       {/* Resting state */}
       <div className="relative h-full flex flex-col p-6 lg:items-center lg:text-center">
         <span className="lp-mono text-[10px] tracking-[0.2em] text-[var(--lp-ink-3)] lg:self-start">FILE.{num}</span>
-        <div className="relative mt-4 mb-5 lg:my-auto pt-12 flex lg:justify-center">
-          <span className="lp-display lp-outline absolute top-0 left-0 lg:left-1/2 lg:-translate-x-1/2 text-[80px] font-bold leading-none text-[var(--lp-ink)] opacity-30 select-none" aria-hidden="true">
+        <div className="mt-4 mb-5 lg:my-auto flex flex-col lg:items-center gap-4">
+          <span className="lp-display lp-outline text-[72px] font-bold leading-[0.8] text-[var(--lp-ink)] opacity-30 select-none" aria-hidden="true">
             {num}
           </span>
-          <Diamond className="absolute top-2 left-[92px] lg:left-[calc(50%+46px)]" />
           <span className="relative block w-20 h-20 lp-grid border border-dashed border-[var(--lp-ink-3)]/50 p-3 text-[var(--lp-ink-2)]">
+            <CornerMarks />
             <ModuleIcon k={m.key} className="w-full h-full" />
           </span>
         </div>
