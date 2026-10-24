@@ -258,7 +258,7 @@ export function Hero({ onDemo }: { onDemo: () => void }) {
     <section id="top" ref={ref} className="lp-grid relative pt-16 overflow-hidden">
       <Contours className="absolute inset-0 w-full h-full" />
 
-      <div className="relative z-10 max-w-[1240px] mx-auto px-4 lg:px-10 pt-14 lg:pt-20 pb-16 lg:pb-20 grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-start">
+      <div className="relative z-10 max-w-[1240px] min-[1800px]:max-w-[1440px] min-[2400px]:max-w-[1680px] mx-auto px-4 lg:px-10 pt-14 lg:pt-20 pb-16 lg:pb-20 grid lg:grid-cols-[1.15fr_0.85fr] gap-12 lg:gap-16 items-start">
         <div>
           <p className="lp-mono flex items-center gap-2 text-[11px] tracking-[0.25em] text-[var(--lp-ink-2)] mb-6">
             <Glyph />
@@ -267,7 +267,7 @@ export function Hero({ onDemo }: { onDemo: () => void }) {
           <BootLines />
 
           <motion.h1
-            className="lp-display text-5xl sm:text-7xl xl:text-[88px] font-bold leading-[0.95] tracking-tighter m-0 mb-8"
+            className="lp-display text-5xl sm:text-7xl xl:text-[88px] min-[1800px]:text-[104px] min-[2400px]:text-[128px] font-bold leading-[0.95] tracking-tighter m-0 mb-8"
             initial={{ opacity: 0, y: 30 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.8, ease: EASE }}
@@ -279,7 +279,7 @@ export function Hero({ onDemo }: { onDemo: () => void }) {
             engine.
           </motion.h1>
 
-          <p className="text-lg text-[var(--lp-ink-2)] max-w-xl leading-relaxed mb-10">
+          <p className="text-lg min-[2400px]:text-xl text-[var(--lp-ink-2)] max-w-xl leading-relaxed mb-10">
             AI reads every incident report and recommends whether it&apos;s recordable, with the
             regulation it relied on. Your safety manager makes the call. The 300 Log fills itself.
           </p>
@@ -297,12 +297,12 @@ export function Hero({ onDemo }: { onDemo: () => void }) {
       </div>
 
       {/* Yellow band with the hatched wordmark, in flow so it never covers the content */}
-      <div className="relative h-[clamp(120px,16vw,240px)] mt-4" aria-hidden="true">
+      <div className="relative h-[clamp(120px,16vw,520px)] mt-4" aria-hidden="true">
         <div className="absolute inset-x-0 top-[22%] bottom-0 bg-[var(--lp-yellow)] -skew-y-2 origin-left">
           <div className="absolute inset-0 lp-diag opacity-60" />
         </div>
         <motion.div className="absolute inset-x-0 bottom-[-0.14em] whitespace-nowrap select-none pl-4 lg:pl-10" style={{ x: bandX }}>
-          <span className="lp-display lp-hatch font-bold leading-none tracking-tighter text-[clamp(110px,19vw,300px)]">FOREMAN</span>
+          <span className="lp-display lp-hatch font-bold leading-none tracking-tighter text-[clamp(110px,19vw,640px)]">FOREMAN</span>
         </motion.div>
       </div>
     </section>

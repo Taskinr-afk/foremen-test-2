@@ -13,7 +13,7 @@ const reveal = {
 
 function Heading({ children, dark = false }: { children: ReactNode; dark?: boolean }) {
   return (
-    <h2 className={`lp-display text-4xl lg:text-6xl font-bold tracking-tighter leading-[0.98] mt-6 mb-0 ${dark ? 'text-white' : ''}`}>
+    <h2 className={`lp-display text-4xl lg:text-6xl min-[2400px]:text-7xl font-bold tracking-tighter leading-[0.98] mt-6 mb-0 ${dark ? 'text-white' : ''}`}>
       {children}
     </h2>
   );
@@ -31,7 +31,7 @@ const problems = [
 export function Problem() {
   return (
     <section id="problem" className="relative scroll-mt-16 py-24 lg:py-32">
-      <div className="max-w-[1240px] mx-auto px-4 lg:px-10">
+      <div className="max-w-[1240px] min-[1800px]:max-w-[1440px] min-[2400px]:max-w-[1680px] mx-auto px-4 lg:px-10">
         <motion.div {...reveal} className="mb-14">
           <SectionLabel index="01">The Problem</SectionLabel>
           <Heading>
@@ -142,7 +142,7 @@ function ModuleStrip({ m, i }: { m: (typeof modules)[number]; i: number }) {
 export function Modules() {
   return (
     <section id="modules" className="relative scroll-mt-16 py-24 lg:py-32 border-t border-[var(--lp-line)] lp-diag">
-      <div className="max-w-[1240px] mx-auto px-4 lg:px-10">
+      <div className="max-w-[1240px] min-[1800px]:max-w-[1440px] min-[2400px]:max-w-[1680px] mx-auto px-4 lg:px-10">
         <motion.div {...reveal} className="mb-14 flex flex-col lg:flex-row lg:items-end lg:justify-between gap-6">
           <div>
             <SectionLabel index="02">Modules</SectionLabel>
@@ -186,7 +186,7 @@ export function Flow() {
   return (
     <section id="flow" ref={ref} className="relative scroll-mt-16 py-24 lg:py-32 overflow-hidden bg-[var(--lp-panel-2)]">
       <div className="hidden lg:block absolute -left-24 top-0 bottom-0 w-[34%] -skew-x-[14deg] bg-[var(--lp-yellow)]" aria-hidden="true" />
-      <div className="relative max-w-[1240px] mx-auto px-4 lg:px-10 grid lg:grid-cols-[300px_1fr] gap-12 lg:gap-16">
+      <div className="relative max-w-[1240px] min-[1800px]:max-w-[1440px] min-[2400px]:max-w-[1680px] mx-auto px-4 lg:px-10 grid lg:grid-cols-[300px_1fr] gap-12 lg:gap-16">
         <motion.div {...reveal}>
           <SectionLabel index="03">Flow</SectionLabel>
           <Heading>From report to log.</Heading>
@@ -245,7 +245,7 @@ export function Clocks() {
   return (
     <section id="clocks" className="lp-on-dark relative scroll-mt-16 py-24 lg:py-28 bg-[var(--lp-dark)] text-white overflow-hidden">
       <div className="lp-halftone absolute inset-0 opacity-40" aria-hidden="true" />
-      <div className="relative max-w-[1240px] mx-auto px-4 lg:px-10">
+      <div className="relative max-w-[1240px] min-[1800px]:max-w-[1440px] min-[2400px]:max-w-[1680px] mx-auto px-4 lg:px-10">
         <motion.div {...reveal} className="mb-12">
           <SectionLabel index="04" dark>Clocks</SectionLabel>
           <Heading dark>The deadlines Foreman watches.</Heading>
@@ -286,7 +286,7 @@ export function Field() {
   return (
     <section id="field" className="relative scroll-mt-16 py-24 lg:py-32 overflow-hidden">
       <Contours className="absolute inset-0 w-full h-full" />
-      <div className="relative max-w-[1240px] mx-auto px-4 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
+      <div className="relative max-w-[1240px] min-[1800px]:max-w-[1440px] min-[2400px]:max-w-[1680px] mx-auto px-4 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
         <motion.div {...reveal}>
           <SectionLabel index="05">Built for Every Facility</SectionLabel>
           <Heading>
@@ -365,10 +365,10 @@ export function Closing({ onDemo }: { onDemo: () => void }) {
   return (
     <section className="relative py-24 lg:py-32 bg-[var(--lp-yellow)] overflow-hidden">
       <div className="lp-grid absolute inset-0 opacity-70" aria-hidden="true" />
-      <div className="relative max-w-[1240px] mx-auto px-4 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
+      <div className="relative max-w-[1240px] min-[1800px]:max-w-[1440px] min-[2400px]:max-w-[1680px] mx-auto px-4 lg:px-10 grid lg:grid-cols-2 gap-14 items-center">
         <motion.div {...reveal}>
           <p className="lp-mono flex items-center gap-2 text-[11px] tracking-[0.25em] m-0 mb-6"><Glyph />{'// NEXT STEP'}</p>
-          <h2 className="lp-display text-5xl lg:text-7xl font-bold tracking-tighter leading-[0.95] m-0 mb-6">
+          <h2 className="lp-display text-5xl lg:text-7xl min-[2400px]:text-8xl font-bold tracking-tighter leading-[0.95] m-0 mb-6">
             Stop guessing.
             <br />
             Start knowing.
