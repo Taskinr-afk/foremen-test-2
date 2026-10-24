@@ -91,7 +91,7 @@ type PillProps = { children: ReactNode; variant?: 'yellow' | 'dark'; href?: stri
 export function Pill({ children, variant = 'yellow', href, onClick, ringOn = 'var(--lp-bg)' }: PillProps) {
   const yellow = variant === 'yellow';
   const className =
-    'lp-display lp-glow group/pill inline-flex items-center gap-3 rounded-full pl-4 pr-6 py-3 text-sm font-bold tracking-wide no-underline cursor-pointer border-none hover:brightness-95 active:translate-y-px';
+    `lp-display lp-glow ${yellow ? 'lp-glow-orange' : 'lp-glow-blue'} group/pill inline-flex items-center gap-3 rounded-full pl-4 pr-6 py-3 text-sm font-bold tracking-wide no-underline cursor-pointer border-none hover:brightness-95 active:translate-y-px`;
   // The ring goes through --lp-ring so .lp-glow can add the hover glow on top of it
   const style = {
     background: yellow ? 'var(--lp-yellow)' : 'var(--lp-dark)',

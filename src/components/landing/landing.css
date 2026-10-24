@@ -13,6 +13,11 @@
   --lp-dark: #161616;
   --lp-yellow: #ffe500;
   --lp-orange: #ff5a1f;
+  /* Hover glows: orange for "book a call" actions, blue for "try the demo" actions */
+  --lp-glow-orange: rgb(255 90 31 / 0.6);
+  --lp-glow-orange-near: rgb(255 90 31 / 0.25);
+  --lp-glow-blue: rgb(47 139 255 / 0.6);
+  --lp-glow-blue-near: rgb(47 139 255 / 0.25);
 
   --lp-display: 'Space Grotesk', system-ui, sans-serif;
   --lp-body: 'DM Sans', system-ui, sans-serif;
@@ -108,9 +113,9 @@
   100% { transform: translateY(-260px); opacity: 0; }
 }
 
-/* Hover / keyboard-focus glow for primary buttons. An element's own ring goes in --lp-ring;
-   --lp-glow-color switches the glow to white where it sits on yellow. No pulsing, so it's
-   fine with reduced motion. */
+/* Hover / keyboard-focus glow for primary buttons. An element's own ring goes in --lp-ring.
+   Add .lp-glow-orange or .lp-glow-blue to pick the colour. No pulsing, so it's fine with
+   reduced motion. */
 .lp-glow {
   box-shadow: var(--lp-ring, 0 0 #0000);
   transition: box-shadow 200ms ease, filter 150ms ease, transform 200ms ease;
@@ -122,6 +127,8 @@
     0 0 0 7px var(--lp-glow-near, rgb(255 229 0 / 0.35)),
     0 0 32px 8px var(--lp-glow-color, rgb(255 229 0 / 0.8));
 }
+.lp-glow-orange { --lp-glow-color: var(--lp-glow-orange); --lp-glow-near: var(--lp-glow-orange-near); }
+.lp-glow-blue { --lp-glow-color: var(--lp-glow-blue); --lp-glow-near: var(--lp-glow-blue-near); }
 
 .lp :focus-visible {
   outline: 2px solid var(--lp-focus, var(--lp-ink));
