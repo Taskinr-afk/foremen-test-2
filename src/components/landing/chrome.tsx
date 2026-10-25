@@ -57,7 +57,7 @@ export function Rail() {
         href={CALL_HREF}
         className="lp-on-dark lp-glow lp-glow-orange mt-auto mb-6 flex flex-col items-center gap-3 bg-[var(--lp-dark)] text-white px-2.5 py-4 no-underline hover:bg-black"
       >
-        <Glyph className="text-[var(--lp-yellow)]" />
+        <Glyph className="text-white" />
         <span className="lp-display text-xs font-bold tracking-wider [writing-mode:vertical-rl]">Book a Call</span>
       </a>
     </aside>

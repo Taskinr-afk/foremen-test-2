@@ -3,12 +3,16 @@
 
 export const BRAND_ORANGE = '#f47721';
 
+// A 12-unit margin around the 415x691 artwork, so edges aren't clipped when small sizes round to whole pixels
+const VIEWBOX = '-12 -12 439 715';
+
 export function ForemanMark({ height = 32, className = '' }: { height?: number; className?: string }) {
   return (
     <svg
-      viewBox="0 0 415 691"
+      viewBox={VIEWBOX}
       height={height}
-      width={(height * 415) / 691}
+      width={(height * 439) / 715}
+      overflow="visible"
       className={`shrink-0 ${className}`}
       aria-hidden="true"
     >
