@@ -46,7 +46,7 @@ export function Rail() {
               aria-current={on ? 'true' : undefined}
               className={`relative flex flex-col items-center gap-0.5 py-3 no-underline transition-colors ${on ? 'bg-[var(--lp-panel-2)] text-[var(--lp-ink)]' : 'text-[var(--lp-ink-3)] hover:text-[var(--lp-ink)]'}`}
             >
-              {on && <motion.span layoutId="rail-mark" className="absolute left-0 top-0 bottom-0 w-[3px] bg-[var(--lp-orange)]" transition={{ duration: 0.3, ease: EASE }} />}
+              {on && <motion.span layoutId="rail-mark" className="absolute left-0 top-0 bottom-0 w-[3px] bg-[var(--lp-ink)]" transition={{ duration: 0.3, ease: EASE }} />}
               <span className="lp-display text-base font-bold">{s.index}</span>
               <span className="lp-mono text-[9px] tracking-widest uppercase">{s.label}</span>
             </a>
@@ -99,7 +99,7 @@ const TITLE_BLOCK = [
 
 /** Footer as an equipment nameplate */
 export function StatusBar({ onDemo }: { onDemo: () => void }) {
-  const link = 'flex items-center gap-2 text-white no-underline bg-transparent border-none cursor-pointer p-0 py-1 text-sm hover:text-[var(--lp-orange)]';
+  const link = 'flex items-center gap-2 text-white no-underline bg-transparent border-none cursor-pointer p-0 py-1 text-sm hover:text-[var(--lp-yellow)]';
   const arrow = (
     <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
       <path d="M4 10h11M11 6l4 4-4 4" fill="none" stroke="currentColor" strokeWidth="2" />

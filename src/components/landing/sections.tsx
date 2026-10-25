@@ -49,7 +49,7 @@ export function Problem() {
               transition={{ ...reveal.transition, delay: i * 0.08 }}
               className="relative flex gap-6 py-8 md:px-6 border-b border-[var(--lp-line)] md:odd:border-r md:odd:pl-0"
             >
-              <span aria-hidden="true" className="lp-display lp-outline text-6xl font-bold leading-none shrink-0 w-16 [--lp-stroke:var(--lp-orange)]">
+              <span className="lp-display lp-outline text-6xl font-bold leading-none text-[var(--lp-ink)] shrink-0 w-16">
                 {String(i + 1).padStart(2, '0')}
               </span>
               <div>
@@ -132,7 +132,7 @@ function ModuleStrip({ m, i }: { m: (typeof modules)[number]; i: number }) {
         <p className="relative lp-display text-base font-bold m-0 mb-2" aria-hidden="true">{m.title}</p>
         <p className="relative text-sm text-white/80 leading-relaxed m-0">{m.desc}</p>
         <svg className="relative mt-auto" viewBox="0 0 24 30" width="18" height="22" aria-hidden="true">
-          <path d="M3 18l9-8 9 8M3 28l9-8 9 8" fill="none" stroke="var(--lp-orange)" strokeWidth="2.5" />
+          <path d="M3 18l9-8 9 8M3 28l9-8 9 8" fill="none" stroke="var(--lp-yellow)" strokeWidth="2.5" />
         </svg>
       </div>
     </motion.li>
@@ -196,7 +196,7 @@ export function Flow() {
             <span className="lp-display text-2xl font-bold text-[var(--lp-ink-2)] mb-1">/{String(steps.length).padStart(2, '0')}</span>
           </div>
           <div className="mt-3 h-2 w-56 bg-[var(--lp-ink)]/15" aria-hidden="true">
-            <motion.div className="h-full bg-[var(--lp-orange)] origin-left" style={{ scaleX: reduce ? 1 : fill }} />
+            <motion.div className="h-full bg-[var(--lp-ink)] origin-left" style={{ scaleX: reduce ? 1 : fill }} />
           </div>
         </motion.div>
 
@@ -204,7 +204,7 @@ export function Flow() {
           <Dimension className="mb-4">Report → Log · {steps.length} stages</Dimension>
           <div className="relative">
             <div className="absolute left-[19px] top-6 bottom-6 w-[2px] bg-[var(--lp-line)]" aria-hidden="true">
-              <motion.div className="w-full h-full bg-[var(--lp-orange)] origin-top" style={{ scaleY: reduce ? 1 : fill }} />
+              <motion.div className="w-full h-full bg-[var(--lp-ink)] origin-top" style={{ scaleY: reduce ? 1 : fill }} />
             </div>
             <ol className="list-none m-0 p-0 relative">
               {steps.map((s, i) => {
@@ -262,7 +262,7 @@ export function Clocks() {
                 {Array.from({ length: c.segs }).map((_, j) => (
                   <motion.span
                     key={j}
-                    className="h-1.5 flex-1 bg-[var(--lp-orange)] origin-bottom"
+                    className="h-1.5 flex-1 bg-[var(--lp-yellow)] origin-bottom"
                     initial={{ scaleY: 0 }}
                     whileInView={{ scaleY: 1 }}
                     viewport={{ once: true }}

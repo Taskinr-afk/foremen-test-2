@@ -232,7 +232,7 @@ function CaseFile() {
               <span
                 key={active}
                 aria-hidden="true"
-                className="absolute left-0 right-0 bottom-0 h-[3px] bg-[var(--lp-orange)] origin-left"
+                className="absolute left-0 right-0 bottom-0 h-[3px] bg-[var(--lp-yellow)] origin-left"
                 style={{ animation: `lp-progress ${CYCLE_MS}ms linear forwards`, animationPlayState: running ? 'running' : 'paused' }}
                 onAnimationEnd={() => setActive((a) => (a + 1) % CASES.length)}
               />

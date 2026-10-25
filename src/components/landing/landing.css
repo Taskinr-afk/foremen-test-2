@@ -31,7 +31,6 @@
 
 .lp-display { font-family: var(--lp-display); }
 
-.lp ::selection { background: var(--lp-orange); color: var(--lp-ink); }
 .lp-mono { font-family: var(--lp-mono); }
 
 /* Hatched outline lettering, as in the ENDFIELD wordmark */
