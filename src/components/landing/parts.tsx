@@ -87,7 +87,7 @@ export function Pill({ children, variant = 'yellow', href, onClick, ringOn = 'va
   } as CSSProperties;
   const inner = (
     <>
-      <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full transition-transform group-hover/pill:scale-150" style={{ background: yellow ? 'var(--lp-ink)' : 'var(--lp-yellow)' }} />
+      <span aria-hidden="true" className="w-1.5 h-1.5 rounded-full transition-transform group-hover/pill:scale-150" style={{ background: yellow ? 'var(--lp-ink)' : 'var(--lp-orange)' }} />
       {children}
     </>
   );
