@@ -1,4 +1,5 @@
 import type { CSSProperties, ReactNode } from 'react';
+import { ForemanMark } from '@/components/brand/foreman-mark';
 
 // Where "Book a call" goes. Swap for a team inbox or scheduling link before launch.
 export const CONTACT_EMAIL = 'yingyuul05@gmail.com';
@@ -7,26 +8,12 @@ export const CALL_HREF = `mailto:${CONTACT_EMAIL}?subject=${encodeURIComponent('
 export const EASE = [0.16, 1, 0.3, 1] as const;
 
 export function LogoMark({ size = 32 }: { size?: number }) {
-  return (
-    <span
-      className="inline-flex items-center justify-center shrink-0"
-      style={{ width: size, height: size, background: 'var(--lp-yellow)' }}
-      aria-hidden="true"
-    >
-      <svg viewBox="0 0 24 24" width={size * 0.6} height={size * 0.6} fill="var(--lp-ink)">
-        <path d="M12 2L2 7v2h20V7L12 2zM4 11v8h3v-8H4zm5 0v8h3v-8H9zm5 0v8h3v-8h-3zm5 0v8h3v-8h-3zM2 21h20v2H2v-2z" />
-      </svg>
-    </span>
-  );
+  return <ForemanMark height={size} className="text-[var(--lp-ink)]" />;
 }
 
-/** Small marker taken from the Foreman logo's columns */
+/** The "F." mark at label size; takes the text colour, the dot stays orange */
 export function Glyph({ className = '' }: { className?: string }) {
-  return (
-    <svg viewBox="0 0 12 12" width="11" height="11" className={`shrink-0 ${className}`} fill="currentColor" aria-hidden="true">
-      <path d="M6 0.5L0.5 3.2v1.1h11V3.2zM1.5 5.4v4h1.6v-4zm2.8 0v4h1.6v-4zm2.8 0v4h1.6v-4zm2.8 0v4h1.6v-4zM0.5 10.4h11v1.1h-11z" />
-    </svg>
-  );
+  return <ForemanMark height={13} className={className} />;
 }
 
 /** Architectural dimension line: |/——— LABEL ———/| */

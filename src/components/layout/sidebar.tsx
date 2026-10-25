@@ -4,6 +4,7 @@ import { useAppStore } from '@/lib/stores/app-store';
 import { clsx } from 'clsx';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useSyncExternalStore } from 'react';
+import { ForemanMark } from '@/components/brand/foreman-mark';
 
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: GridIcon },
@@ -53,11 +54,7 @@ export function Sidebar() {
         )}
       >
         <div className="flex items-center gap-3 px-5 h-16 border-b border-[var(--border)]">
-          <div className="w-8 h-8 bg-[var(--signal)] flex items-center justify-center" aria-hidden="true">
-            <svg viewBox="0 0 24 24" className="w-5 h-5" fill="#121212">
-              <path d="M12 2L2 7v2h20V7L12 2zM4 11v8h3v-8H4zm5 0v8h3v-8H9zm5 0v8h3v-8h-3zm5 0v8h3v-8h-3zM2 21h20v2H2v-2z" />
-            </svg>
-          </div>
+          <ForemanMark height={30} className="text-[var(--ink)]" />
           <div>
             <p className="m-0 text-sm font-bold tracking-tight text-[var(--ink)]" style={{ fontFamily: 'var(--font-display)' }}>
               FOREMAN
