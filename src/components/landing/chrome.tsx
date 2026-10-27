@@ -64,7 +64,7 @@ export function Rail() {
   );
 }
 
-export function TopBar({ onSignIn, onDemo }: { onSignIn: () => void; onDemo: () => void }) {
+export function TopBar({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp: () => void }) {
   return (
     <header className="fixed top-0 right-0 left-0 lg:left-[72px] z-30 h-16 flex items-center justify-between px-4 lg:px-10 bg-[var(--lp-bg)]/85 backdrop-blur-md border-b border-[var(--lp-line)]/70">
       <a href="#top" className="flex items-center gap-3 no-underline text-[var(--lp-ink)]" aria-label="Foreman home">
@@ -75,15 +75,10 @@ export function TopBar({ onSignIn, onDemo }: { onSignIn: () => void; onDemo: () 
         </span>
       </a>
       <div className="flex items-center gap-4 sm:gap-6">
-        <button type="button" onClick={onDemo} className="lp-display text-sm font-semibold text-[var(--lp-ink-2)] hover:text-[var(--lp-ink)] bg-transparent border-none cursor-pointer py-2">
-          Demo
-        </button>
-        <button type="button" onClick={onSignIn} className="hidden sm:inline lp-display text-sm font-semibold text-[var(--lp-ink-2)] hover:text-[var(--lp-ink)] bg-transparent border-none cursor-pointer py-2">
+        <button type="button" onClick={onSignIn} className="lp-display text-sm font-semibold text-[var(--lp-ink-2)] hover:text-[var(--lp-ink)] bg-transparent border-none cursor-pointer py-2">
           Sign In
         </button>
-        <span className="lg:hidden">
-          <Pill href={CALL_HREF}>Book a Call</Pill>
-        </span>
+        <Pill variant="yellow" onClick={onSignUp}>Sign Up</Pill>
       </div>
     </header>
   );
@@ -98,7 +93,7 @@ const TITLE_BLOCK = [
 ];
 
 /** Footer as an equipment nameplate */
-export function StatusBar({ onDemo }: { onDemo: () => void }) {
+export function StatusBar({ onSignUp }: { onSignUp: () => void }) {
   const link = 'flex items-center gap-2 text-white no-underline bg-transparent border-none cursor-pointer p-0 py-1 text-sm hover:text-[var(--lp-yellow)]';
   const arrow = (
     <svg viewBox="0 0 20 20" width="16" height="16" aria-hidden="true">
@@ -119,7 +114,7 @@ export function StatusBar({ onDemo }: { onDemo: () => void }) {
         </dl>
         <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <a href={CALL_HREF} className={link}>{arrow} Book a call</a>
-          <button type="button" onClick={onDemo} className={link}>{arrow} Try the demo</button>
+          <button type="button" onClick={onSignUp} className={link}>{arrow} Sign up</button>
           <a href="#top" className={link}>{arrow} Back to top</a>
         </nav>
       </div>

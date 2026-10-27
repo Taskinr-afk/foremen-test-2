@@ -361,7 +361,7 @@ function AccessBadge({ header, title, sub, no, tilt, dark = false, href, onClick
   return href ? <a href={href} className={cls}>{body}</a> : <button type="button" onClick={onClick} className={cls}>{body}</button>;
 }
 
-export function Closing({ onDemo }: { onDemo: () => void }) {
+export function Closing({ onSignUp }: { onSignUp: () => void }) {
   return (
     <section className="relative py-24 lg:py-32 bg-[var(--lp-yellow)] overflow-hidden">
       <div className="lp-grid absolute inset-0 opacity-70" aria-hidden="true" />
@@ -374,13 +374,13 @@ export function Closing({ onDemo }: { onDemo: () => void }) {
             Start knowing.
           </h2>
           <p className="text-lg max-w-md leading-relaxed m-0">
-            Every incident classified. Every decision documented. Every log defensible. Tell us how
-            recordkeeping works at your company. It takes 15 minutes.
+            Every incident classified. Every decision documented. Every log defensible. Tell us about
+            your operation and we build your custom setup.
           </p>
         </motion.div>
         <motion.nav {...reveal} aria-label="Next step" className="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-8 sm:gap-6">
-          <AccessBadge header="VISITOR · 15 MIN" title="Book a call" sub="Tell us how your team records injuries." no="PASS 001" tilt="-rotate-2" href={CALL_HREF} />
-          <AccessBadge header="DEMO ACCESS" title="Try the demo" sub="Walk a case from report to the 300 Log." no="PASS 002" tilt="rotate-2 sm:mt-10" dark onClick={onDemo} />
+          <AccessBadge header="NEW FACILITY" title="Sign up" sub="Tell us your industry and tech. Get a custom setup." no="PASS 001" tilt="-rotate-2" onClick={onSignUp} />
+          <AccessBadge header="VISITOR · 15 MIN" title="Book a call" sub="Tell us how your team records injuries." no="PASS 002" tilt="rotate-2 sm:mt-10" dark href={CALL_HREF} />
         </motion.nav>
       </div>
     </section>

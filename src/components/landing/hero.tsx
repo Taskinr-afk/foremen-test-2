@@ -248,7 +248,7 @@ function CaseFile() {
   );
 }
 
-export function Hero({ onDemo }: { onDemo: () => void }) {
+export function Hero({ onSignUp }: { onSignUp: () => void }) {
   const ref = useRef<HTMLElement>(null);
   const reduce = useReducedMotion();
   const { scrollYProgress } = useScroll({ target: ref, offset: ['start start', 'end start'] });
@@ -285,8 +285,8 @@ export function Hero({ onDemo }: { onDemo: () => void }) {
           </p>
 
           <div className="flex flex-wrap items-center gap-5">
-            <Pill href={CALL_HREF}>Book a 15-min Call</Pill>
-            <Pill variant="dark" onClick={onDemo}>Try the Demo</Pill>
+            <Pill variant="yellow" onClick={onSignUp}>Sign Up</Pill>
+            <Pill variant="dark" href={CALL_HREF}>Book a 15-min Call</Pill>
           </div>
           <p className="text-sm text-[var(--lp-ink-3)] mt-6">
             Early access. We&apos;re talking with safety managers now, and we&apos;re not selling anything yet.

@@ -38,17 +38,17 @@ export default function LandingPage() {
       <div className="lp min-h-screen w-full">
         <a href="#main" className="lp-skip no-underline">Skip to content</a>
         <Rail />
-        <TopBar onSignIn={() => setSignInOpen(true)} onDemo={startSignup} />
+        <TopBar onSignIn={() => setSignInOpen(true)} onSignUp={startSignup} />
         <main id="main" tabIndex={-1} className="lg:pl-[72px] outline-none">
-          <Hero onDemo={startSignup} />
+          <Hero onSignUp={startSignup} />
           <Problem />
           <Modules />
           <Flow />
           <Clocks />
           <Field />
-          <Closing onDemo={startSignup} />
+          <Closing onSignUp={startSignup} />
         </main>
-        <StatusBar onDemo={startSignup} />
+        <StatusBar onSignUp={startSignup} />
         <SignInModal open={signInOpen} onClose={closeSignIn} onEnterApp={enterApp} />
       </div>
     </MotionConfig>
