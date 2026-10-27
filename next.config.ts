@@ -4,7 +4,7 @@ const nextConfig: NextConfig = {
   output: 'export',
   trailingSlash: true,
   images: { unoptimized: true },
-  basePath: '/foreman',
+  basePath: '/foremen-test-2',
   turbopack: {
     rules: {
       "*.css": {
