@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useAppStore } from '@/lib/stores/app-store';
 import {
@@ -42,28 +42,43 @@ export function ReviewQueue() {
     );
   }
 
+  const [showBanner, setShowBanner] = useState(true);
+
+  useEffect(() => {
+    if (pending.length > 0) {
+      setShowBanner(true);
+      const t = setTimeout(() => setShowBanner(false), 3000);
+      return () => clearTimeout(t);
+    }
+  }, [pending.length]);
+
   return (
     <div className="space-y-5 max-w-4xl">
-      <motion.div
-        className="flex items-start gap-3 p-4 rounded-[var(--radius-lg)] border border-[var(--accent)]/30"
-        style={{ backgroundColor: 'var(--accent-subtle)' }}
-        initial={{ opacity: 0, y: -8 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
-      >
-        <svg className="w-5 h-5 shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
-          <circle cx="10" cy="10" r="8" />
-          <path d="M10 6v4M10 13h.01" />
-        </svg>
-        <div>
-          <p className="text-sm font-semibold text-[var(--ink)] m-0" style={{ fontFamily: 'var(--font-display)' }}>
-            {pending.length} case{pending.length !== 1 ? 's' : ''} waiting for your review
-          </p>
-          <p className="text-xs text-[var(--ink-muted)] m-0 mt-1">
-            Foreman classified these cases. Check each determination and sign off. Nothing goes on the 300 Log until you do.
-          </p>
-        </div>
-      </motion.div>
+      <AnimatePresence>
+        {showBanner && (
+          <motion.div
+            className="flex items-start gap-3 p-4 rounded-[var(--radius-lg)] border border-[var(--accent)]/30"
+            style={{ backgroundColor: 'var(--accent-subtle)' }}
+            initial={{ opacity: 0, y: -8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8, height: 0, marginBottom: 0, padding: 0, overflow: 'hidden' }}
+            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <svg className="w-5 h-5 shrink-0 mt-0.5" style={{ color: 'var(--accent)' }} viewBox="0 0 20 20" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+              <circle cx="10" cy="10" r="8" />
+              <path d="M10 6v4M10 13h.01" />
+            </svg>
+            <div>
+              <p className="text-sm font-semibold text-[var(--ink)] m-0" style={{ fontFamily: 'var(--font-display)' }}>
+                {pending.length} case{pending.length !== 1 ? 's' : ''} waiting for your review
+              </p>
+              <p className="text-xs text-[var(--ink-muted)] m-0 mt-1">
+                Foreman classified these cases. Check each determination and sign off. Nothing goes on the 300 Log until you do.
+              </p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
       <AnimatePresence>
         {pending.map((incident, i) => (
           <ReviewCard key={incident.id} incident={incident} index={i} />
