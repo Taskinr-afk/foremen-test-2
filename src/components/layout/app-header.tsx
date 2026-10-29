@@ -11,7 +11,7 @@ export function AppHeader() {
     dashboard: 'Dashboard',
     report: 'Report Incident',
     incidents: 'All Incidents',
-    review: 'Review Queue',
+    review: 'Review',
     log: 'OSHA 300 Log',
     forms: 'Export Forms',
     audit: 'Audit Trail',

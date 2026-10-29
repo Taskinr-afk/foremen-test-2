@@ -31,7 +31,7 @@ export function RecentIncidents() {
           whileHover={{ x: 2 }}
           whileTap={{ scale: 0.95 }}
         >
-          Go to Review Queue
+          Go to Review
         </motion.button>
       </div>
 
@@ -42,7 +42,8 @@ export function RecentIncidents() {
           return (
             <motion.div
               key={incident.id}
-              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-5 py-3.5"
+              className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 px-5 py-3.5 cursor-pointer"
+              onClick={() => setActiveView('review')}
               initial={{ opacity: 0, x: -8 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.3, delay: 0.05 * i, ease: [0.22, 1, 0.36, 1] }}

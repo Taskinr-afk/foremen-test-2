@@ -9,7 +9,7 @@ import { ForemanMark } from '@/components/brand/foreman-mark';
 const NAV_ITEMS = [
   { id: 'dashboard', label: 'Dashboard', icon: GridIcon },
   { id: 'report', label: 'Report Incident', icon: PlusCircleIcon },
-  { id: 'review', label: 'Review Queue', icon: CheckCircleIcon },
+  { id: 'review', label: 'Review', icon: CheckCircleIcon },
   { id: 'log', label: 'OSHA 300 Log', icon: TableIcon },
   { id: 'audit', label: 'Audit Trail', icon: ClockIcon },
   { id: 'settings', label: 'Settings', icon: GearIcon },
