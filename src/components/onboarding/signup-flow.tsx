@@ -1,7 +1,7 @@
 'use client';
 
 import { motion, AnimatePresence } from 'framer-motion';
-import { useState, useMemo } from 'react';
+import React, { useState, useMemo } from 'react';
 import { CALL_HREF, CornerMarks, Dash, Dimension, EASE, Glyph, LogoMark, Pill } from '@/components/landing/parts';
 
 type Industry =
@@ -102,7 +102,7 @@ const FIXED_QUESTIONS: FixedQuestion[] = [
     id: 'employees',
     question: 'How many employees at this site?',
     subtitle: 'Determines your OSHA reporting requirements.',
-    options: ['1 - 19', '20 - 99', '100 - 249', '250 - 500', '500+'],
+    options: ['1 to 19', '20 to 99', '100 to 249', '250 to 500', 'More than 500'],
   },
   {
     id: 'current_system',
@@ -126,78 +126,84 @@ const FIXED_QUESTIONS: FixedQuestion[] = [
     id: 'sites',
     question: 'How many work sites do you manage?',
     subtitle: 'Helps us set up your log structure.',
-    options: ['1 site', '2 - 5 sites', '6 - 10 sites', '10+ sites'],
+    options: ['1 site', '2 to 5 sites', '6 to 10 sites', 'More than 10 sites'],
   },
   {
     id: 'timeline',
     question: 'How soon do you need this running?',
     subtitle: 'We\'ll match your timeline.',
-    options: ['ASAP - we have a gap right now', 'Within a month', 'Just exploring options'],
+    options: ['Immediately - we have a gap right now', 'Within a month', 'Just exploring options'],
   },
 ];
 
-function getIncidentCapture(answers: Record<string, string>): { label: string; desc: string } {
-  if (answers.devices_floor === 'Yes, scanners/tablets') {
-    return { label: 'Web Kiosk Mode', desc: 'QR codes at work zones, shared tablet entry, offline-capable' };
-  }
-  if (answers.devices_field === 'Company phones' || answers.devices_general === 'Company phones') {
-    return { label: 'Native App', desc: 'Push notifications, offline mode, biometric lock on company devices' };
-  }
-  if (answers.devices_field === 'BYOD (personal phones)' || answers.devices_general === 'BYOD / personal phones') {
-    return { label: 'Progressive Web App', desc: 'Zero install, QR link to report, works on any phone' };
-  }
-  if (answers.radios === 'Yes, primary comms' || answers.devices_general === 'Radios only') {
-    return { label: 'Voice-First Capture', desc: 'Voice memo over radio, AI transcription, pre-filled incident form' };
-  }
-  return { label: 'Simple Web Form', desc: 'Browser-based reporting from any device, printed confirmation slip' };
+interface SolutionItem {
+  label: string;
+  desc: string;
+  detail: string;
 }
 
-function getConnectedData(answers: Record<string, string>): { label: string; desc: string }[] {
-  const results: { label: string; desc: string }[] = [];
+function getIncidentCapture(answers: Record<string, string>): SolutionItem {
+  if (answers.devices_floor === 'Yes, scanners/tablets') {
+    return { label: 'Web Kiosk Mode', desc: 'QR codes at work zones, shared tablet entry, works offline', detail: 'Workers scan a QR code at their station and fill out the incident form on a shared tablet. Reports sync automatically when the device reconnects.' };
+  }
+  if (answers.devices_field === 'Company phones' || answers.devices_general === 'Company phones') {
+    return { label: 'Native App', desc: 'Push notifications, offline mode, biometric lock on company devices', detail: 'Your team gets push alerts when an incident needs attention. Reports are filed directly from the field, even without cell service.' };
+  }
+  if (answers.devices_field === 'BYOD (personal phones)' || answers.devices_general === 'BYOD / personal phones') {
+    return { label: 'Progressive Web App', desc: 'No app install needed, QR link to report, works on any phone', detail: 'Workers open a link on their personal phone and file a report in under two minutes. No downloads, no logins, no friction.' };
+  }
+  if (answers.radios === 'Yes, primary comms' || answers.devices_general === 'Radios only') {
+    return { label: 'Voice-First Capture', desc: 'Voice memo over radio, transcribed by AI, pre-filled incident form', detail: 'A worker describes the incident over radio. AI transcribes the report and pre-fills the form so the safety manager only reviews and submits.' };
+  }
+  return { label: 'Simple Web Form', desc: 'Browser-based reporting from any device with a printed confirmation', detail: 'Open it in any browser, fill out the details, and get a printed confirmation. Simple enough for anyone on your team to use on day one.' };
+}
+
+function getConnectedData(answers: Record<string, string>): SolutionItem[] {
+  const results: SolutionItem[] = [];
   if (answers.cameras_full === 'Yes, full coverage') {
-    results.push({ label: 'Camera Clip (Auto)', desc: 'Footage auto-attached to incident report' });
+    results.push({ label: 'Camera Clip (Automatic)', desc: 'Footage is automatically attached to each incident report', detail: 'When an incident is filed, Foremen pulls the matching camera footage by timestamp and location, so your safety manager has video evidence ready without searching.' });
   } else if (answers.cameras_full === 'Partial coverage') {
-    results.push({ label: 'Camera Clip (Manual)', desc: 'Timestamped clip request for covered areas' });
+    results.push({ label: 'Camera Clip (Manual)', desc: 'Timestamped clip request for covered areas', detail: 'Foremen sends a timestamped request to your camera system so your team can pull the right footage without scrubbing through hours of video.' });
   } else if (answers.cameras_yard === 'Yes, yard/site cameras') {
-    results.push({ label: 'Camera Reference', desc: 'Yard camera reference note on each incident' });
+    results.push({ label: 'Camera Reference', desc: 'Yard camera reference note on each incident', detail: 'Each incident report includes the nearest camera ID and timestamp so your team knows exactly where to look for footage.' });
   }
   if (answers.fleet_gps === 'Yes, GPS + ELD') {
-    results.push({ label: 'ELD Integration', desc: 'Auto-pulls driver, vehicle, GPS, hours-of-service' });
+    results.push({ label: 'ELD Integration', desc: 'Automatically pulls driver, vehicle, GPS, and hours-of-service data', detail: 'When a driver files a report, Foremen fills in the vehicle, location, and hours-of-service from your ELD system. No manual data entry needed.' });
   } else if (answers.fleet_gps === 'GPS only') {
-    results.push({ label: 'GPS + Vehicle ID', desc: 'Location and vehicle data on each incident' });
+    results.push({ label: 'GPS and Vehicle ID', desc: 'Location and vehicle data included on each incident', detail: 'Foremen tags every incident with GPS coordinates and the assigned vehicle, giving your team location context without extra steps.' });
   }
   if (answers.wearables === 'Yes') {
-    results.push({ label: 'Wearable Auto-Trigger', desc: 'Fall detection or gas exposure opens pre-filled form' });
+    results.push({ label: 'Wearable Auto-Trigger', desc: 'Fall detection or gas exposure opens a pre-filled form', detail: 'When a wearable detects a fall or gas exposure, Foremen automatically opens a pre-filled incident form so the response starts before anyone has to type.' });
   }
   return results;
 }
 
-function getMigrationPath(answers: Record<string, string>): { label: string; desc: string } {
+function getMigrationPath(answers: Record<string, string>): SolutionItem {
   const sys = answers.current_system;
-  if (sys === 'Paper forms and binders') return { label: 'Paper Digitization', desc: 'Scan or photo existing binders, AI imports all fields' };
-  if (sys === 'Spreadsheets (Excel, Google Sheets)') return { label: 'Spreadsheet Import', desc: 'Column mapping wizard, DART/TRIR continuity preserved' };
-  if (sys === 'EHS software (VelocityEHS, Cority, etc.)') return { label: 'EHS Complement Mode', desc: 'Runs parallel, CSV export compatible with your existing platform' };
-  return { label: 'Zero-to-Compliant Setup', desc: 'Full setup in one guided session, no prior data needed' };
+  if (sys === 'Paper forms and binders') return { label: 'Paper Digitization', desc: 'Scan or photograph existing binders, and our AI imports every field', detail: 'Take a photo of your paper logs and Foremen reads the handwriting, extracts the data, and builds your digital 300 Log. Years of records migrated in hours, not weeks.' };
+  if (sys === 'Spreadsheets (Excel, Google Sheets)') return { label: 'Spreadsheet Import', desc: 'Column mapping wizard that preserves your injury rate history', detail: 'Upload your spreadsheet and Foremen maps each column to the right fields. Your historical injury rates carry over so your trends stay unbroken.' };
+  if (sys === 'EHS software (VelocityEHS, Cority, etc.)') return { label: 'EHS Complement Mode', desc: 'Runs alongside your current platform with compatible data exports', detail: 'Foremen works next to your existing EHS software. It handles the recordability decision and OSHA forms while your main platform stays in place.' };
+  return { label: 'Zero-to-Compliant Setup', desc: 'Full setup in one guided session with no prior data needed', detail: 'Starting fresh is actually the easiest path. One guided session gets you from zero to a fully compliant recordkeeping system.' };
 }
 
-function getFirstPriority(answers: Record<string, string>): { label: string; desc: string } {
+function getFirstPriority(answers: Record<string, string>): SolutionItem {
   const pain = answers.pain_point;
-  if (pain === 'Deciding if injuries are recordable') return { label: 'Decision Engine', desc: '29 CFR rules encoded. Plain-English verdict with regulation citations.' };
-  if (pain === 'Filling out OSHA forms correctly') return { label: 'Form Automation', desc: '300/301/300A auto-generated from signed-off incidents' };
-  if (pain === 'Hitting the ITA March 2 deadline') return { label: 'ITA Sprint', desc: 'CSV builder, 60/30/7-day alerts, ITA sandbox validation' };
-  if (pain === 'Being ready for an OSHA audit') return { label: 'Audit Shield', desc: 'Full decision log, 4-hour OSHA doc pack, First Aid binder' };
-  return { label: 'Score Protection', desc: 'First Aid optimization engine, DART/TRIR dashboard, insurance cost estimator' };
+  if (pain === 'Deciding if injuries are recordable') return { label: 'Decision Engine', desc: 'Every regulation encoded into plain-English verdicts with citations', detail: 'Foremen reads the incident details, applies the 29 CFR 1904 rules, and tells your safety manager whether the case is recordable, with the exact regulation it relied on.' };
+  if (pain === 'Filling out OSHA forms correctly') return { label: 'Form Automation', desc: 'Forms 300, 301, and 300A generated automatically from signed-off incidents', detail: 'Once your safety manager signs off on a case, Foremen fills the 300 Log entry, the 301 form, and updates the 300A summary. No manual transcription.' };
+  if (pain === 'Hitting the ITA March 2 deadline') return { label: 'ITA Sprint', desc: 'Automated file builder with countdown alerts and validation', detail: 'Foremen builds your ITA submission file, sends alerts at 60, 30, and 7 days before the deadline, and validates the file against the ITA portal before you submit.' };
+  if (pain === 'Being ready for an OSHA audit') return { label: 'Audit Shield', desc: 'Complete decision log with a ready-to-go documentation package', detail: 'Every recordability decision is logged with the reasoning and regulation. If OSHA shows up, Foremen assembles your full documentation package in under four hours.' };
+  return { label: 'Score Protection', desc: 'Injury rate dashboard with first-aid optimization and insurance cost tracking', detail: 'Foremen watches your injury rates in real time, flags cases that might be reclassified, and shows you exactly how each decision affects your insurance costs.' };
 }
 
-function getOshaCoverage(answers: Record<string, string>): { label: string; desc: string } {
+function getOshaCoverage(answers: Record<string, string>): SolutionItem {
   const emp = answers.employees;
-  if (emp === '100 - 249' || emp === '250 - 500' || emp === '500+') {
-    return { label: 'Full ITA Reporting (100+)', desc: '300 Log + 301 per incident + 300A summary + full case-level ITA upload by March 2' };
+  if (emp === '100 to 249' || emp === '250 to 500' || emp === 'More than 500') {
+    return { label: 'Full ITA Reporting', desc: 'Complete 300 Log, 301 forms, 300A summary, and full case-level ITA upload before March 2', detail: 'Your site size requires full case-level electronic reporting. Foremen handles the entire ITA submission, validates every field, and confirms receipt so nothing slips through.' };
   }
-  if (emp === '20 - 99') {
-    return { label: 'ITA 300A Reporting (20+)', desc: '300 Log + 301 per incident + 300A summary + ITA 300A upload by March 2' };
+  if (emp === '20 to 99') {
+    return { label: 'ITA Summary Reporting', desc: 'Complete 300 Log, 301 forms, 300A summary, and ITA 300A upload before March 2', detail: 'Your site needs the 300A summary submission to OSHA each year. Foremen calculates your annual summary, builds the file, and walks you through the upload.' };
   }
-  return { label: 'Standard Recordkeeping', desc: '300 Log + 301 per incident + 300A summary + immediate severe-injury reporting' };
+  return { label: 'Standard Recordkeeping', desc: 'Complete 300 Log, 301 forms, 300A summary, and immediate severe-injury reporting', detail: 'You maintain logs on-site and report severe injuries within 24 hours. Foremen keeps your logs current and alerts you the moment a case triggers the reporting requirement.' };
 }
 
 interface SignupFlowProps {
@@ -468,7 +474,7 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
                 </p>
 
                 <div className="space-y-3 mb-10">
-                  <SolutionCard tag="01" category="INCIDENT CAPTURE" label={solution.capture.label} desc={solution.capture.desc} delay={0} />
+                  <SolutionCard tag="01" category="INCIDENT CAPTURE" label={solution.capture.label} desc={solution.capture.desc} detail={solution.capture.detail} delay={0} />
 
                   {solution.data.map((d, i) => (
                     <SolutionCard
@@ -477,6 +483,7 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
                       category={i === 0 ? 'CONNECTED DATA' : ''}
                       label={d.label}
                       desc={d.desc}
+                      detail={d.detail}
                       delay={0.08 * (i + 1)}
                     />
                   ))}
@@ -486,6 +493,7 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
                     category="MIGRATION PATH"
                     label={solution.migration.label}
                     desc={solution.migration.desc}
+                    detail={solution.migration.detail}
                     delay={0.08 * (solution.data.length + 1)}
                   />
 
@@ -494,6 +502,7 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
                     category="FIRST PRIORITY"
                     label={solution.priority.label}
                     desc={solution.priority.desc}
+                    detail={solution.priority.detail}
                     delay={0.08 * (solution.data.length + 2)}
                   />
 
@@ -502,6 +511,7 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
                     category="OSHA COVERAGE"
                     label={solution.coverage.label}
                     desc={solution.coverage.desc}
+                    detail={solution.coverage.detail}
                     delay={0.08 * (solution.data.length + 3)}
                   />
                 </div>
@@ -693,7 +703,60 @@ function OptionButton({ label, index, selected, onClick }: { label: string; inde
   );
 }
 
-function SolutionCard({ tag, category, label, desc, delay }: { tag: string; category: string; label: string; desc: string; delay: number }) {
+const CATEGORY_ICONS: Record<string, React.ReactNode> = {
+  'INCIDENT CAPTURE': (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--lp-ink)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 5H7a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2" />
+      <rect x="9" y="3" width="6" height="4" rx="1" />
+      <path d="M9 14l2 2 4-4" />
+    </svg>
+  ),
+  'CONNECTED DATA': (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--lp-ink)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="6" cy="6" r="2" />
+      <circle cx="18" cy="6" r="2" />
+      <circle cx="12" cy="18" r="2" />
+      <path d="M7.5 7.5L11 16M16.5 7.5L13 16M8 6h8" />
+    </svg>
+  ),
+  'MIGRATION PATH': (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--lp-ink)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M4 17V7a2 2 0 012-2h8l4 4v8a2 2 0 01-2 2H6a2 2 0 01-2-2z" />
+      <path d="M14 5v4h4" />
+      <path d="M8 13h8M11 10l-3 3 3 3" />
+    </svg>
+  ),
+  'FIRST PRIORITY': (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--lp-ink)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M12 2L4 7v5c0 5.25 3.4 10.2 8 11 4.6-.8 8-5.75 8-11V7l-8-5z" />
+      <path d="M9 12l2 2 4-4" />
+    </svg>
+  ),
+  'OSHA COVERAGE': (
+    <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="var(--lp-ink)" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <rect x="3" y="4" width="18" height="16" rx="2" />
+      <path d="M3 10h18M8 4v16" />
+      <path d="M13 14h4M13 17h3" />
+    </svg>
+  ),
+};
+
+function SolutionCardIcon({ category }: { category: string }) {
+  const icon = CATEGORY_ICONS[category];
+  if (!icon) return null;
+  return (
+    <motion.div
+      initial={{ scale: 0.8, opacity: 0 }}
+      animate={{ scale: 1, opacity: 1 }}
+      transition={{ duration: 0.3, ease: EASE }}
+      className="w-10 h-10 shrink-0 flex items-center justify-center bg-[var(--lp-yellow)]/20 border border-[var(--lp-yellow)]"
+    >
+      {icon}
+    </motion.div>
+  );
+}
+
+function SolutionCard({ tag, category, label, desc, detail, delay }: { tag: string; category: string; label: string; desc: string; detail: string; delay: number }) {
   const [hovered, setHovered] = useState(false);
   return (
     <motion.div
@@ -706,6 +769,7 @@ function SolutionCard({ tag, category, label, desc, delay }: { tag: string; cate
     >
       <CornerMarks />
       <span className="lp-mono text-[11px] tracking-widest text-[var(--lp-ink-3)] shrink-0 pt-0.5">{tag}</span>
+      {category && <SolutionCardIcon category={category} />}
       <div className="flex-1 min-w-0">
         {category && (
           <span className="lp-mono text-[10px] tracking-[0.2em] text-[var(--lp-ink-3)] block mb-1">{category}</span>
@@ -715,21 +779,23 @@ function SolutionCard({ tag, category, label, desc, delay }: { tag: string; cate
         <motion.div
           initial={false}
           animate={{ height: hovered ? 'auto' : 0, opacity: hovered ? 1 : 0 }}
-          transition={{ duration: 0.25, ease: EASE }}
+          transition={{ duration: 0.3, ease: EASE }}
           className="overflow-hidden"
         >
-          <span className="block text-xs text-[var(--lp-ink-3)] mt-2 pt-2 border-t border-[var(--lp-line)] leading-relaxed">
-            Included in your quote. Our team will walk you through setup.
-          </span>
+          <div className="mt-3 pt-3 border-t border-[var(--lp-line)]">
+            <p className="text-xs text-[var(--lp-ink-2)] leading-relaxed m-0">{detail}</p>
+          </div>
         </motion.div>
       </div>
-      <motion.span
-        animate={{ x: hovered ? 4 : 0, opacity: hovered ? 1 : 0.4 }}
+      <motion.div
+        animate={{ y: hovered ? 2 : 0, opacity: hovered ? 1 : 0.3 }}
         transition={{ duration: 0.2, ease: EASE }}
-        className="lp-mono text-[11px] text-[var(--lp-ink-3)] shrink-0 pt-0.5"
+        className="shrink-0 pt-1"
       >
-        &rarr;
-      </motion.span>
+        <svg viewBox="0 0 16 16" width="14" height="14" fill="none" stroke="var(--lp-ink-3)" strokeWidth="1.5" strokeLinecap="round">
+          <path d={hovered ? 'M4 6l4 4 4-4' : 'M4 8h8'} />
+        </svg>
+      </motion.div>
     </motion.div>
   );
 }
