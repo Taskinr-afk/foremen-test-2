@@ -11,6 +11,7 @@ const NAV_ITEMS = [
   { id: 'report', label: 'Report Incident', icon: PlusCircleIcon },
   { id: 'review', label: 'Review', icon: CheckCircleIcon },
   { id: 'log', label: 'OSHA 300 Log', icon: TableIcon },
+  { id: 'forms', label: 'Forms', icon: FileIcon },
   { id: 'audit', label: 'Audit Trail', icon: ClockIcon },
   { id: 'settings', label: 'Settings', icon: GearIcon },
 ];
@@ -162,6 +163,15 @@ function TableIcon({ className }: { className?: string }) {
     <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round">
       <rect x="1.5" y="2.5" width="13" height="11" rx="1.5" />
       <path d="M1.5 6h13M1.5 9.5h13M5.5 6v7.5M10.5 6v7.5" />
+    </svg>
+  );
+}
+
+function FileIcon({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+      <path d="M9 1.5H4a1.5 1.5 0 00-1.5 1.5v10A1.5 1.5 0 004 14.5h8a1.5 1.5 0 001.5-1.5V6L9 1.5z" />
+      <path d="M9 1.5V6h4.5M6 9h4M6 11.5h4" />
     </svg>
   );
 }

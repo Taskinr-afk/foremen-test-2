@@ -10,10 +10,9 @@ export function AppHeader() {
   const titles: Record<string, string> = {
     dashboard: 'Dashboard',
     report: 'Report Incident',
-    incidents: 'All Incidents',
     review: 'Review',
     log: 'OSHA 300 Log',
-    forms: 'Export Forms',
+    forms: 'Forms',
     audit: 'Audit Trail',
     settings: 'Settings',
   };

@@ -9,6 +9,7 @@ import { ReviewQueue } from '@/components/review/review-queue';
 import { OshaLog } from '@/components/log/osha-log';
 import { SettingsView } from '@/components/settings/settings-view';
 import { AuditTrail } from '@/components/audit/audit-trail';
+import { FormsView } from '@/components/forms/forms-view';
 import { motion, AnimatePresence } from 'framer-motion';
 import { useEffect, useRef } from 'react';
 
@@ -56,8 +57,7 @@ function ViewRouter({ onSwitch }: { onSwitch: () => void }) {
         {activeView === 'report' && <ReportForm key={facility} />}
         {activeView === 'review' && <ReviewQueue />}
         {activeView === 'log' && <OshaLog />}
-        {activeView === 'incidents' && <PlaceholderView title="All Incidents" description="Full incident list with filtering and search. Coming next." />}
-        {activeView === 'forms' && <PlaceholderView title="Export Forms" description="Generate OSHA 300A summary, 301 forms, and ITA CSV exports." />}
+        {activeView === 'forms' && <FormsView />}
         {activeView === 'audit' && <AuditTrail />}
         {activeView === 'settings' && <SettingsView />}
       </motion.div>
