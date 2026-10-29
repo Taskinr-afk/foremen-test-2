@@ -2,7 +2,7 @@
 
 import { motion, AnimatePresence } from 'framer-motion';
 import { useState, useMemo } from 'react';
-import { CornerMarks, Dash, Dimension, EASE, Glyph, LogoMark, Pill } from '@/components/landing/parts';
+import { CALL_HREF, CornerMarks, Dash, Dimension, EASE, Glyph, LogoMark, Pill } from '@/components/landing/parts';
 
 type Industry =
   | 'warehouse'
@@ -211,6 +211,7 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [currentTechIdx, setCurrentTechIdx] = useState(0);
   const [currentFixedIdx, setCurrentFixedIdx] = useState(0);
+  const [contactForm, setContactForm] = useState({ name: '', email: '', company: '', message: '' });
 
   const techQs = useMemo(() => {
     if (!industry) return [];
@@ -218,14 +219,16 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
   }, [industry]);
 
   const totalSteps = useMemo(() => {
-    if (!industry) return 4;
-    return 1 + TECH_QUESTIONS.filter((q) => q.industries.includes(industry)).length + FIXED_QUESTIONS.length + 1;
+    if (!industry) return 6;
+    return 1 + TECH_QUESTIONS.filter((q) => q.industries.includes(industry)).length + FIXED_QUESTIONS.length + 3;
   }, [industry]);
 
   const currentStepNumber = useMemo(() => {
     if (step === 0) return 1;
     if (step === 1) return 2 + currentTechIdx;
     if (step === 2) return 2 + techQs.length + currentFixedIdx;
+    if (step === 3) return totalSteps - 2;
+    if (step === 4) return totalSteps - 1;
     return totalSteps;
   }, [step, currentTechIdx, currentFixedIdx, techQs.length, totalSteps]);
 
@@ -263,14 +266,18 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
     } else if (step === 2) {
       if (currentFixedIdx > 0) setCurrentFixedIdx((i) => i - 1);
       else { setCurrentTechIdx(techQs.length - 1); setStep(1); }
-    } else {
+    } else if (step === 3) {
       setCurrentFixedIdx(FIXED_QUESTIONS.length - 1);
       setStep(2);
+    } else if (step === 4) {
+      setStep(3);
+    } else {
+      setStep(4);
     }
   };
 
   const solution = useMemo(() => {
-    if (step !== 3 || !industry) return null;
+    if (step < 3 || !industry) return null;
     return {
       capture: getIncidentCapture(answers),
       data: getConnectedData(answers),
@@ -500,7 +507,7 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
                 </div>
 
                 <div className="flex flex-wrap items-center gap-5">
-                  <Pill variant="yellow" onClick={onComplete}>Launch Your Dashboard</Pill>
+                  <Pill variant="yellow" onClick={() => setStep(4)}>Get a Quote</Pill>
                   <Pill
                     variant="dark"
                     onClick={() => {
@@ -509,10 +516,140 @@ export function SignupFlow({ onComplete, onBack }: SignupFlowProps) {
                       setAnswers({});
                       setCurrentTechIdx(0);
                       setCurrentFixedIdx(0);
+                      setContactForm({ name: '', email: '', company: '', message: '' });
                     }}
                   >
                     Start Over
                   </Pill>
+                </div>
+              </motion.div>
+            )}
+
+            {/* STEP 4: contact form */}
+            {step === 4 && (
+              <motion.div
+                key="contact"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.4, ease: EASE }}
+              >
+                <p className="lp-mono flex items-center gap-2 text-[11px] tracking-[0.25em] text-[var(--lp-ink-2)] mb-4">
+                  <Glyph />
+                  {'// GET A QUOTE'}
+                </p>
+                <Dimension className="mb-8">Tell us about your company</Dimension>
+
+                <h2 className="lp-display text-3xl lg:text-4xl font-bold tracking-tighter mb-3">
+                  How should we reach you?
+                </h2>
+                <p className="text-base text-[var(--lp-ink-2)] mb-10 leading-relaxed">
+                  We will put together a custom quote for your {industryLabel.toLowerCase()} operation and get back to you within 24 hours.
+                </p>
+
+                <form
+                  onSubmit={(e) => { e.preventDefault(); setStep(5); }}
+                  className="space-y-5 max-w-lg"
+                >
+                  {([
+                    { id: 'cf-name', label: 'Name', type: 'text', field: 'name' as const, ph: 'Your full name', required: true },
+                    { id: 'cf-email', label: 'Business Email', type: 'email', field: 'email' as const, ph: 'you@company.com', required: true },
+                    { id: 'cf-company', label: 'Company', type: 'text', field: 'company' as const, ph: 'Company name', required: true },
+                  ] as const).map((f, i) => (
+                    <motion.div
+                      key={f.id}
+                      initial={{ opacity: 0, x: -10 }}
+                      animate={{ opacity: 1, x: 0 }}
+                      transition={{ delay: i * 0.06, ease: EASE }}
+                      className="flex items-stretch"
+                    >
+                      <label htmlFor={f.id} className="lp-display w-36 shrink-0 text-xs font-bold tracking-wider uppercase flex items-center border-r-2 border-[var(--lp-ink)] mr-3">
+                        {f.label}.
+                      </label>
+                      <input
+                        id={f.id}
+                        type={f.type}
+                        required={f.required}
+                        value={contactForm[f.field]}
+                        onChange={(e) => setContactForm((prev) => ({ ...prev, [f.field]: e.target.value }))}
+                        placeholder={f.ph}
+                        className="flex-1 min-w-0 bg-transparent border-0 border-b-2 border-[var(--lp-ink-3)] px-1 py-2 text-base focus:border-[var(--lp-ink)] placeholder:text-[var(--lp-ink-3)] outline-none"
+                      />
+                    </motion.div>
+                  ))}
+
+                  <motion.div
+                    initial={{ opacity: 0, x: -10 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    transition={{ delay: 0.18, ease: EASE }}
+                    className="flex items-start"
+                  >
+                    <label htmlFor="cf-message" className="lp-display w-36 shrink-0 text-xs font-bold tracking-wider uppercase flex items-start pt-2 border-r-2 border-[var(--lp-ink)] mr-3">
+                      Message.
+                    </label>
+                    <textarea
+                      id="cf-message"
+                      rows={4}
+                      value={contactForm.message}
+                      onChange={(e) => setContactForm((prev) => ({ ...prev, message: e.target.value }))}
+                      placeholder="Anything we should know? (optional)"
+                      className="flex-1 min-w-0 bg-transparent border-0 border-b-2 border-[var(--lp-ink-3)] px-1 py-2 text-base focus:border-[var(--lp-ink)] placeholder:text-[var(--lp-ink-3)] outline-none resize-none"
+                    />
+                  </motion.div>
+
+                  <motion.div
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    transition={{ delay: 0.3, ease: EASE }}
+                    className="flex flex-wrap items-center gap-5 pt-4"
+                  >
+                    <button
+                      type="submit"
+                      className="lp-display inline-flex items-center gap-3 text-sm font-bold tracking-wider px-8 py-3.5 border-none cursor-pointer bg-[var(--lp-yellow)] text-[var(--lp-ink)] hover:brightness-95"
+                    >
+                      Send Quote Request
+                    </button>
+                  </motion.div>
+                </form>
+              </motion.div>
+            )}
+
+            {/* STEP 5: thank you */}
+            {step === 5 && (
+              <motion.div
+                key="thanks"
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: -20 }}
+                transition={{ duration: 0.5, ease: EASE }}
+                className="text-center max-w-lg mx-auto"
+              >
+                <motion.div
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{ delay: 0.1, duration: 0.4, ease: EASE }}
+                  className="w-20 h-20 mx-auto mb-8 bg-[var(--lp-yellow)] flex items-center justify-center"
+                >
+                  <svg viewBox="0 0 24 24" width="40" height="40" fill="none" stroke="var(--lp-ink)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round">
+                    <path d="M5 12l5 5L20 7" />
+                  </svg>
+                </motion.div>
+
+                <p className="lp-mono flex items-center justify-center gap-2 text-[11px] tracking-[0.25em] text-[var(--lp-ink-2)] mb-4">
+                  <Glyph />
+                  {'// REQUEST RECEIVED'}
+                </p>
+
+                <h2 className="lp-display text-3xl lg:text-4xl font-bold tracking-tighter mb-3">
+                  We got your request.
+                </h2>
+                <p className="text-base text-[var(--lp-ink-2)] mb-10 leading-relaxed">
+                  Our team will review your {industryLabel.toLowerCase()} configuration and send a custom quote to <strong>{contactForm.email}</strong> within 24 hours.
+                </p>
+
+                <div className="flex flex-col sm:flex-row items-center justify-center gap-5">
+                  <Pill variant="yellow" href={CALL_HREF}>Book a Call</Pill>
+                  <Pill variant="dark" onClick={onBack}>Back to Home</Pill>
                 </div>
               </motion.div>
             )}
@@ -557,12 +694,15 @@ function OptionButton({ label, index, selected, onClick }: { label: string; inde
 }
 
 function SolutionCard({ tag, category, label, desc, delay }: { tag: string; category: string; label: string; desc: string; delay: number }) {
+  const [hovered, setHovered] = useState(false);
   return (
     <motion.div
       initial={{ opacity: 0, x: -15 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay, duration: 0.4, ease: EASE }}
-      className="relative flex items-start gap-4 p-5 bg-[var(--lp-panel)] border border-[var(--lp-line)]"
+      onMouseEnter={() => setHovered(true)}
+      onMouseLeave={() => setHovered(false)}
+      className="relative flex items-start gap-4 p-5 bg-[var(--lp-panel)] border border-[var(--lp-line)] cursor-pointer transition-colors hover:bg-[var(--lp-panel-2)] hover:border-[var(--lp-ink-3)]"
     >
       <CornerMarks />
       <span className="lp-mono text-[11px] tracking-widest text-[var(--lp-ink-3)] shrink-0 pt-0.5">{tag}</span>
@@ -572,7 +712,24 @@ function SolutionCard({ tag, category, label, desc, delay }: { tag: string; cate
         )}
         <span className="lp-display text-sm font-bold text-[var(--lp-ink)] block mb-1">{label}</span>
         <span className="text-xs text-[var(--lp-ink-2)] leading-relaxed">{desc}</span>
+        <motion.div
+          initial={false}
+          animate={{ height: hovered ? 'auto' : 0, opacity: hovered ? 1 : 0 }}
+          transition={{ duration: 0.25, ease: EASE }}
+          className="overflow-hidden"
+        >
+          <span className="block text-xs text-[var(--lp-ink-3)] mt-2 pt-2 border-t border-[var(--lp-line)] leading-relaxed">
+            Included in your quote. Our team will walk you through setup.
+          </span>
+        </motion.div>
       </div>
+      <motion.span
+        animate={{ x: hovered ? 4 : 0, opacity: hovered ? 1 : 0.4 }}
+        transition={{ duration: 0.2, ease: EASE }}
+        className="lp-mono text-[11px] text-[var(--lp-ink-3)] shrink-0 pt-0.5"
+      >
+        &rarr;
+      </motion.span>
     </motion.div>
   );
 }

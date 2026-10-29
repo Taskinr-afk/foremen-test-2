@@ -78,7 +78,7 @@ export function TopBar({ onSignIn, onSignUp }: { onSignIn: () => void; onSignUp:
         <button type="button" onClick={onSignIn} className="lp-display text-sm font-semibold text-[var(--lp-ink-2)] hover:text-[var(--lp-ink)] bg-transparent border-none cursor-pointer py-2">
           Sign In
         </button>
-        <Pill variant="yellow" onClick={onSignUp}>Sign Up</Pill>
+        <Pill variant="yellow" onClick={onSignUp}>Get a Quote</Pill>
       </div>
     </header>
   );
@@ -114,7 +114,7 @@ export function StatusBar({ onSignUp }: { onSignUp: () => void }) {
         </dl>
         <nav aria-label="Footer" className="flex flex-wrap items-center gap-x-6 gap-y-2">
           <a href={CALL_HREF} className={link}>{arrow} Book a call</a>
-          <button type="button" onClick={onSignUp} className={link}>{arrow} Sign up</button>
+          <button type="button" onClick={onSignUp} className={link}>{arrow} Get a quote</button>
           <a href="#top" className={link}>{arrow} Back to top</a>
         </nav>
       </div>

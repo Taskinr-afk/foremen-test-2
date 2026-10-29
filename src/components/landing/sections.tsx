@@ -379,7 +379,7 @@ export function Closing({ onSignUp }: { onSignUp: () => void }) {
           </p>
         </motion.div>
         <motion.nav {...reveal} aria-label="Next step" className="flex flex-col sm:flex-row items-center sm:items-start justify-center gap-8 sm:gap-6">
-          <AccessBadge header="NEW FACILITY" title="Sign up" sub="Tell us your industry and tech. Get a custom setup." no="PASS 001" tilt="-rotate-2" onClick={onSignUp} />
+          <AccessBadge header="NEW FACILITY" title="Get a quote" sub="Tell us your industry and tech. Get a custom setup." no="PASS 001" tilt="-rotate-2" onClick={onSignUp} />
           <AccessBadge header="VISITOR · 15 MIN" title="Book a call" sub="Tell us how your team records injuries." no="PASS 002" tilt="rotate-2 sm:mt-10" dark href={CALL_HREF} />
         </motion.nav>
       </div>
