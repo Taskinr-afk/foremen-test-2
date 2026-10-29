@@ -8,6 +8,7 @@ type Industry =
   | 'warehouse'
   | 'manufacturing'
   | 'food'
+  | 'healthcare'
   | 'construction'
   | 'electrical'
   | 'trucking'
@@ -25,6 +26,7 @@ const INDUSTRIES: IndustryOption[] = [
   { id: 'warehouse', tag: 'WH', label: 'Warehouse / Logistics', desc: 'Distribution, fulfillment, 3PL' },
   { id: 'manufacturing', tag: 'MF', label: 'Manufacturing', desc: 'Fabrication, assembly, production' },
   { id: 'food', tag: 'FP', label: 'Food Processing', desc: 'Meat, dairy, bakery, beverage' },
+  { id: 'healthcare', tag: 'HC', label: 'Healthcare', desc: 'Hospitals, clinics, long-term care' },
   { id: 'construction', tag: 'GC', label: 'Construction', desc: 'General, commercial, residential' },
   { id: 'electrical', tag: 'EL', label: 'Electrical / HVAC', desc: 'Electricians, HVAC, plumbing' },
   { id: 'trucking', tag: 'TK', label: 'Trucking / Fleet', desc: 'Freight, delivery, fleet ops' },
@@ -44,7 +46,7 @@ const TECH_QUESTIONS: TechQuestion[] = [
     id: 'cameras_full',
     question: 'Do your facilities have security or safety cameras?',
     options: ['Yes, full coverage', 'Partial coverage', 'No cameras'],
-    industries: ['warehouse', 'manufacturing', 'food', 'trucking'],
+    industries: ['warehouse', 'manufacturing', 'food', 'healthcare', 'trucking'],
   },
   {
     id: 'cameras_yard',
@@ -56,7 +58,7 @@ const TECH_QUESTIONS: TechQuestion[] = [
     id: 'devices_floor',
     question: 'Do workers use company-issued scanners or tablets on the floor?',
     options: ['Yes, scanners/tablets', 'Some areas', 'No floor devices'],
-    industries: ['warehouse', 'manufacturing', 'food'],
+    industries: ['warehouse', 'manufacturing', 'food', 'healthcare'],
   },
   {
     id: 'devices_field',
